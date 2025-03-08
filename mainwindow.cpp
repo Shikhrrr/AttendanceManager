@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 //checking if this works
+//yup its working
 
 MainWindow::~MainWindow()
 {
