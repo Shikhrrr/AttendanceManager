@@ -15,15 +15,9 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    QString username = "Mukesh";
-    QString password = "123";
     ~MainWindow();
 
 private slots:
-
-    void on_login_clicked();
-
-    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
