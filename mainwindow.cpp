@@ -9,8 +9,13 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //sets first-open page
     ui->stackedWidget->setCurrentIndex(1);
+    //to be removed
     ui->groupBox_2->hide();
+
+    collapsedWidth = ui->collapseSideBar->width();
+    fullWidth = ui->sideBar->maximumWidth();
 }
 
 //checking if this works
@@ -38,5 +43,17 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
     ui->stackedWidget->setCurrentIndex(2);
+}
+
+
+void MainWindow::on_collapseSideBar_clicked()
+{
+    if (ui->sideBar->width() == fullWidth) {
+        ui->sideBar->setFixedWidth(collapsedWidth);
+        ui->collapseSideBar->setText("->");
+    } else {
+        ui->sideBar->setFixedWidth(fullWidth);
+        ui->collapseSideBar->setText("X");
+    }
 }
 
