@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(1);
+    ui->groupBox_2->hide();
 }
 
 //checking if this works
@@ -22,7 +23,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_editProfile_clicked()
 {
-    checkProfile *cp = new checkProfile();
+    checkProfile *cp = new checkProfile(this);
     cp->show();
     cp->setModal(true);
 }
