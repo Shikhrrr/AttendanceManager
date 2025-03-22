@@ -68,7 +68,7 @@ border-radius: 10px;</string>
           <string>&lt;-</string>
          </property>
         </widget>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>20</x>
@@ -113,21 +113,94 @@ border-radius: 10px;</string>
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="p0">
         <widget class="QLabel" name="label_7">
          <property name="geometry">
           <rect>
-           <x>210</x>
-           <y>220</y>
-           <width>63</width>
-           <height>20</height>
+           <x>150</x>
+           <y>50</y>
+           <width>301</width>
+           <height>51</height>
           </rect>
          </property>
-         <property name="text">
-          <string>another</string>
+         <property name="styleSheet">
+          <string notr="true">font: 24pt &quot;Segoe UI&quot;;</string>
          </property>
+         <property name="text">
+          <string>Take Attendance</string>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="takeYear">
+         <property name="geometry">
+          <rect>
+           <x>110</x>
+           <y>150</y>
+           <width>82</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <item>
+          <property name="text">
+           <string>1st</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2nd</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3rd</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>4th</string>
+          </property>
+         </item>
+        </widget>
+        <widget class="QComboBox" name="takeBranch">
+         <property name="geometry">
+          <rect>
+           <x>270</x>
+           <y>150</y>
+           <width>82</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <item>
+          <property name="text">
+           <string>CSE</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>IT</string>
+          </property>
+         </item>
+        </widget>
+        <widget class="QComboBox" name="takeGroup">
+         <property name="geometry">
+          <rect>
+           <x>430</x>
+           <y>150</y>
+           <width>82</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <item>
+          <property name="text">
+           <string>A</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>B</string>
+          </property>
+         </item>
         </widget>
        </widget>
        <widget class="QWidget" name="p1">
@@ -308,17 +381,40 @@ border-radius: 10px;</string>
         </widget>
        </widget>
        <widget class="QWidget" name="p2">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="viewHeading">
          <property name="geometry">
           <rect>
-           <x>240</x>
-           <y>200</y>
-           <width>91</width>
-           <height>21</height>
+           <x>140</x>
+           <y>30</y>
+           <width>301</width>
+           <height>81</height>
           </rect>
          </property>
+         <property name="styleSheet">
+          <string notr="true">font: 24pt &quot;Segoe UI&quot;;</string>
+         </property>
          <property name="text">
-          <string>some page</string>
+          <string>View Attendance</string>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="viewYear">
+         <property name="geometry">
+          <rect>
+           <x>90</x>
+           <y>140</y>
+           <width>91</width>
+           <height>28</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="comboBox">
+         <property name="geometry">
+          <rect>
+           <x>270</x>
+           <y>140</y>
+           <width>82</width>
+           <height>28</height>
+          </rect>
          </property>
         </widget>
        </widget>

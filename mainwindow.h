@@ -36,6 +36,10 @@ private slots:
 
     void eraseDetails();
 
+    void on_gotoViewAttendance_clicked();
+
+    void on_gotoTakeAttendance_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;
