@@ -2,6 +2,7 @@
 #define LOGIN_H
 
 #include <QWidget>
+#include<QtSql>
 
 namespace Ui {
 class Login;
