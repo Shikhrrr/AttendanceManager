@@ -23,6 +23,7 @@ private slots:
 
 private:
     Ui::Login *ui;
+    void connectToDatabase();
 };
 
 #endif // LOGIN_H
