@@ -25,7 +25,7 @@ void Login::connectToDatabase() {
 
     // 🔥 Check and print the actual database path
     QString dbPath = QCoreApplication::applicationDirPath() + "/sample.db";
-    qDebug() << "Database Path:" << dbPath;
+    // qDebug() << "Database Path:" << dbPath;
 
     // ✅ Use absolute path for testing (remove later for portability)
     // db.setDatabaseName("C:/Users/shikh/OneDrive/Documents/AttendanceManager/sample.db");
@@ -36,28 +36,27 @@ void Login::connectToDatabase() {
     if (db.open()) {
         qDebug() << "✅ Connected to SQLite!";
         qDebug() << "📂 Database Name: " << db.databaseName();
-        ui->label->setText("connected");
 
-        // 🔥 Verify tables
-        QSqlQuery query("SELECT name FROM sqlite_master WHERE type='table'");
+        // // 🔥 Verify tables
+        // QSqlQuery query("SELECT name FROM sqlite_master WHERE type='table'");
 
-        if (!query.exec()) {
-            QMessageBox::critical(this, "Error", "Failed to retrieve table names: " + query.lastError().text());
-            qDebug() << "Query Error:" << query.lastError().text();
-            return;
-        }
+        // if (!query.exec()) {
+        //     QMessageBox::critical(this, "Error", "Failed to retrieve table names: " + query.lastError().text());
+        //     qDebug() << "Query Error:" << query.lastError().text();
+        //     return;
+        // }
 
-        QString tableList;
-        while (query.next()) {
-            tableList += query.value(0).toString() + "\n";
-        }
+        // QString tableList;
+        // while (query.next()) {
+        //     tableList += query.value(0).toString() + "\n";
+        // }
 
-        if (tableList.isEmpty()) {
-            tableList = "No tables found!";
-        }
+        // if (tableList.isEmpty()) {
+        //     tableList = "No tables found!";
+        // }
 
-        QMessageBox::information(this, "Tables in Database", tableList);
-        qDebug() << "Tables: " << tableList;
+        // QMessageBox::information(this, "Tables in Database", tableList);
+        // qDebug() << "Tables: " << tableList;
 
     } else {
         ui->label->setText("could not connect");

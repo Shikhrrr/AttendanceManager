@@ -46,5 +46,6 @@ private:
     int fullWidth;
     QString username;
     QString password;
+    void connectToDatabase();
 };
 #endif // MAINWINDOW_H
