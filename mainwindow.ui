@@ -233,6 +233,19 @@ border-radius: 10px;</string>
           </property>
          </column>
         </widget>
+        <widget class="QPushButton" name="takeFetch">
+         <property name="geometry">
+          <rect>
+           <x>600</x>
+           <y>80</y>
+           <width>83</width>
+           <height>29</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Fetch</string>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="p1">
         <widget class="QGroupBox" name="groupBox">

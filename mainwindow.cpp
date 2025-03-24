@@ -213,17 +213,15 @@ void MainWindow::on_reset_clicked()
     ui->currentName->setText(newUsername);
 }
 
-
-
-
 void MainWindow::on_gotoViewAttendance_clicked()
 {
     ui->stackedWidget->setCurrentIndex(2);
 }
 
-
 void MainWindow::on_gotoTakeAttendance_clicked()
 {
     ui->stackedWidget->setCurrentIndex(0);
 }
+
+//for taking attendance
 
