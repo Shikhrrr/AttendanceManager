@@ -81,7 +81,7 @@ void Login::on_login_clicked()
     QSqlQuery query;
 
     // Prepare query safely
-    if (!query.prepare("SELECT * FROM table1 WHERE username = :username AND password = :password")) {
+    if (!query.prepare("SELECT * FROM admin WHERE username = :username AND password = :password")) {
         qDebug() << "Query preparation failed: " << query.lastError().text();
         return;
     }

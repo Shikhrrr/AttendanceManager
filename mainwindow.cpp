@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 🔥 Fetch and display the current username
     QSqlQuery query;
-    if (query.exec("SELECT username FROM table1 LIMIT 1")) {  // Assuming only one user in table1 for now
+    if (query.exec("SELECT username FROM admin LIMIT 1")) {  // Assuming only one user in table1 for now
         if (query.next()) {
             QString currentUsername = query.value(0).toString();
             ui->currentName->setText(currentUsername);
@@ -120,7 +120,7 @@ void MainWindow::on_ok_clicked()
 
     // 🔥 Query to verify the username and password
     QSqlQuery query;
-    query.prepare("SELECT * FROM table1 WHERE username = :username AND password = :password");
+    query.prepare("SELECT * FROM admin WHERE username = :username AND password = :password");
     query.bindValue(":username", enteredUsername);
     query.bindValue(":password", enteredPassword);
 
@@ -181,7 +181,7 @@ void MainWindow::on_reset_clicked()
     QString currentUsername;
     QSqlQuery fetchQuery;
 
-    if (!fetchQuery.exec("SELECT username FROM table1 LIMIT 1")) {
+    if (!fetchQuery.exec("SELECT username FROM admin LIMIT 1")) {
         QMessageBox::critical(this, "Error", "Failed to fetch username: " + fetchQuery.lastError().text());
         return;
     }
@@ -196,7 +196,7 @@ void MainWindow::on_reset_clicked()
 
     // 🔥 Update both the username and password
     QSqlQuery query;
-    query.prepare("UPDATE table1 SET username = :newUsername, password = :newPassword WHERE username = :currentUsername");
+    query.prepare("UPDATE admin SET username = :newUsername, password = :newPassword WHERE username = :currentUsername");
     query.bindValue(":newUsername", newUsername);
     query.bindValue(":newPassword", newPassword);
     query.bindValue(":currentUsername", currentUsername);
@@ -238,7 +238,7 @@ void MainWindow::on_takeFetch_clicked()
     QString selectedBranch = ui->takeBranch->currentText();
 
     QSqlQuery query;
-    query.prepare("SELECT roll, name FROM students WHERE year = :year AND branch = :branch");
+    query.prepare("SELECT roll, name FROM student WHERE year = :year AND branch = :branch");
     query.bindValue(":year", selectedYear[0]);
     query.bindValue(":branch", selectedBranch);
 
@@ -314,10 +314,19 @@ void MainWindow::on_takeMarkAll_clicked()
     }
 
     // ✅ Loop through all rows and set the checkbox checked
-    for (int row = 0; row < model->rowCount(); ++row) {
-        QModelIndex index = model->index(row, 2);  // Column 2: Checkbox column
-        model->setData(index, Qt::Checked, Qt::CheckStateRole);
-    }
+    if (ui->takeMarkAll->text() == "Mark All") {
+        ui->takeMarkAll->setText("Remove All");
+        for (int row = 0; row < model->rowCount(); ++row) {
+            QModelIndex index = model->index(row, 2);  // Column 2: Checkbox column
+            model->setData(index, Qt::Checked, Qt::CheckStateRole);
+        }
 
-    qDebug() << "All checkboxes marked!";
+        qDebug() << "All checkboxes marked!";
+    } else {
+        ui->takeMarkAll->setText("Mark All");
+        for (int row = 0; row < model->rowCount(); ++row) {
+            QModelIndex index = model->index(row, 2);  // Column 2: Checkbox column
+            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
+        }
+    }
 }
