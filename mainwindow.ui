@@ -202,37 +202,6 @@ border-radius: 10px;</string>
           </property>
          </item>
         </widget>
-        <widget class="QTableWidget" name="tableWidget">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>130</y>
-           <width>721</width>
-           <height>441</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>721</width>
-           <height>0</height>
-          </size>
-         </property>
-         <column>
-          <property name="text">
-           <string>Roll</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Name</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Present</string>
-          </property>
-         </column>
-        </widget>
         <widget class="QPushButton" name="takeFetch">
          <property name="geometry">
           <rect>
@@ -244,6 +213,16 @@ border-radius: 10px;</string>
          </property>
          <property name="text">
           <string>Fetch</string>
+         </property>
+        </widget>
+        <widget class="QTableView" name="studentTable">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>120</y>
+           <width>741</width>
+           <height>451</height>
+          </rect>
          </property>
         </widget>
        </widget>

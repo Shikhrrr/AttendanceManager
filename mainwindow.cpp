@@ -6,6 +6,8 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QDebug>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -226,42 +228,75 @@ void MainWindow::on_gotoTakeAttendance_clicked()
 //for taking attendance
 
 
+#include <QSqlQueryModel>
+
 void MainWindow::on_takeFetch_clicked()
 {
+    QString selectedYear = ui->takeYear->currentText();
+    QString selectedBranch = ui->takeBranch->currentText();
+
     QSqlQuery query;
-    query.prepare("SELECT id, name FROM students WHERE year = :year AND branch = :branch");
-    query.bindValue(":year", selectedYear);
+    query.prepare("SELECT roll, name FROM students WHERE year = :year AND branch = :branch");
+    query.bindValue(":year", selectedYear[0]);
     query.bindValue(":branch", selectedBranch);
 
     if (!query.exec()) {
         qDebug() << "Error fetching students:" << query.lastError().text();
-    } else {
-        while (query.next()) {
-            int studentId = query.value("id").toInt();
-            QString studentName = query.value("name").toString();
-            studentDropdown->addItem(studentName, studentId);
-        }
+        QMessageBox::critical(this, "Error", "Failed to fetch students: " + query.lastError().text());
+        return;
     }
+
+    // ✅ Create a model for the table
+    QStandardItemModel *model = new QStandardItemModel(this);
+
+    // ✅ Set table headers
+    model->setHorizontalHeaderLabels(QStringList() << "ID" << "Name" << "Present");
+
+    int row = 0;
+    while (query.next()) {
+        int studentId = query.value("roll").toInt();
+        QString studentName = query.value("name").toString();
+
+        // ✅ Add ID and Name as table rows
+        QStandardItem *idItem = new QStandardItem(QString::number(studentId));
+        QStandardItem *nameItem = new QStandardItem(studentName);
+
+        // ✅ Add checkbox item
+        QStandardItem *checkboxItem = new QStandardItem();
+        checkboxItem->setCheckable(true);
+        checkboxItem->setCheckState(Qt::Unchecked);  // Initially unchecked
+
+        // ✅ Add items to the model
+        model->setItem(row, 0, idItem);
+        model->setItem(row, 1, nameItem);
+        model->setItem(row, 2, checkboxItem);
+
+        row++;
+    }
+
+    // ✅ Set the model to the `QTableView`
+    ui->studentTable->setModel(model);
+    ui->studentTable->resizeColumnsToContents();
 }
 
 
-void MainWindow::on_pushButton_clicked()
-{
-        QSqlQuery query;
-        for (int i = 0; i < studentList.size(); i++) {
-            int studentId = studentList[i].id;
-            QString status = (checkboxList[i]->isChecked()) ? "Present" : "Absent";
+// void MainWindow::on_pushButton_clicked()
+// {
+//         QSqlQuery query;
+//         for (int i = 0; i < studentList.size(); i++) {
+//             int studentId = studentList[i].id;
+//             QString status = (checkboxList[i]->isChecked()) ? "Present" : "Absent";
 
-            query.prepare("INSERT INTO attendance (student_id, teacher_id, status, date) VALUES (:student_id, :teacher_id, :status, DATE('now'))");
-            query.bindValue(":student_id", studentId);
-            query.bindValue(":teacher_id", loggedInTeacherId);
-            query.bindValue(":status", status);
+//             query.prepare("INSERT INTO attendance (student_id, teacher_id, status, date) VALUES (:student_id, :teacher_id, :status, DATE('now'))");
+//             query.bindValue(":student_id", studentId);
+//             query.bindValue(":teacher_id", loggedInTeacherId);
+//             query.bindValue(":status", status);
 
-            if (!query.exec()) {
-                qDebug() << "Error inserting attendance:" << query.lastError().text();
-            }
-        }
-        qDebug() << "Attendance submitted successfully!";
+//             if (!query.exec()) {
+//                 qDebug() << "Error inserting attendance:" << query.lastError().text();
+//             }
+//         }
+//         qDebug() << "Attendance submitted successfully!";
 
-}
+// }
 
