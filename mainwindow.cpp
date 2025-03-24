@@ -225,3 +225,9 @@ void MainWindow::on_gotoTakeAttendance_clicked()
 
 //for taking attendance
 
+
+void MainWindow::on_takeFetch_clicked()
+{
+
+}
+
