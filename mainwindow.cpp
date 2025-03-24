@@ -228,6 +228,40 @@ void MainWindow::on_gotoTakeAttendance_clicked()
 
 void MainWindow::on_takeFetch_clicked()
 {
+    QSqlQuery query;
+    query.prepare("SELECT id, name FROM students WHERE year = :year AND branch = :branch");
+    query.bindValue(":year", selectedYear);
+    query.bindValue(":branch", selectedBranch);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching students:" << query.lastError().text();
+    } else {
+        while (query.next()) {
+            int studentId = query.value("id").toInt();
+            QString studentName = query.value("name").toString();
+            studentDropdown->addItem(studentName, studentId);
+        }
+    }
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+        QSqlQuery query;
+        for (int i = 0; i < studentList.size(); i++) {
+            int studentId = studentList[i].id;
+            QString status = (checkboxList[i]->isChecked()) ? "Present" : "Absent";
+
+            query.prepare("INSERT INTO attendance (student_id, teacher_id, status, date) VALUES (:student_id, :teacher_id, :status, DATE('now'))");
+            query.bindValue(":student_id", studentId);
+            query.bindValue(":teacher_id", loggedInTeacherId);
+            query.bindValue(":status", status);
+
+            if (!query.exec()) {
+                qDebug() << "Error inserting attendance:" << query.lastError().text();
+            }
+        }
+        qDebug() << "Attendance submitted successfully!";
 
 }
 
