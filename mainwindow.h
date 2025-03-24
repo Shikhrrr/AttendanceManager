@@ -44,6 +44,8 @@ private slots:
 
     // void on_pushButton_clicked();
 
+    void on_takeMarkAll_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;

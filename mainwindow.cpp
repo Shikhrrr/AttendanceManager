@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     // ✅ Hide the option to update credentials
     ui->newDetailsGroup->hide();
     ui->confirmDetailsGroup->hide();
+    ui->takeMarkAll->hide();
 
     collapsedWidth = ui->collapseSideBar->width();
     fullWidth = ui->sideBar->maximumWidth();
@@ -232,6 +233,7 @@ void MainWindow::on_gotoTakeAttendance_clicked()
 
 void MainWindow::on_takeFetch_clicked()
 {
+    ui->takeMarkAll->show();
     QString selectedYear = ui->takeYear->currentText();
     QString selectedBranch = ui->takeBranch->currentText();
 
@@ -300,3 +302,22 @@ void MainWindow::on_takeFetch_clicked()
 
 // }
 
+
+void MainWindow::on_takeMarkAll_clicked()
+{
+    // ✅ Get the model from the tableView
+    QAbstractItemModel *model = ui->studentTable->model();
+
+    if (!model) {
+        qDebug() << "No model found!";
+        return;
+    }
+
+    // ✅ Loop through all rows and set the checkbox checked
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QModelIndex index = model->index(row, 2);  // Column 2: Checkbox column
+        model->setData(index, Qt::Checked, Qt::CheckStateRole);
+    }
+
+    qDebug() << "All checkboxes marked!";
+}
