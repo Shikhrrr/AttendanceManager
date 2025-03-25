@@ -46,6 +46,10 @@ private slots:
 
     void on_takeMarkAll_clicked();
 
+    void on_gotoAddClass_clicked();
+
+    void on_addSubmit_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;

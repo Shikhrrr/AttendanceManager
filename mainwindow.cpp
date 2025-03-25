@@ -320,8 +320,6 @@ void MainWindow::on_takeMarkAll_clicked()
             QModelIndex index = model->index(row, 2);  // Column 2: Checkbox column
             model->setData(index, Qt::Checked, Qt::CheckStateRole);
         }
-
-        qDebug() << "All checkboxes marked!";
     } else {
         ui->takeMarkAll->setText("Mark All");
         for (int row = 0; row < model->rowCount(); ++row) {
@@ -330,3 +328,51 @@ void MainWindow::on_takeMarkAll_clicked()
         }
     }
 }
+
+void MainWindow::on_gotoAddClass_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(3);
+}
+void MainWindow::on_addSubmit_clicked()
+{
+    // ✅ Fetch the values from the input fields
+    QString roll = ui->addRoll->text().trimmed();
+    QString name = ui->addName->text().trimmed();
+    QString year = ui->addYear->currentText();
+    QString branch = ui->addBranch->currentText();
+
+    // 🚫 Validation: Ensure no empty fields
+    if (roll.isEmpty() || name.isEmpty() || year.isEmpty() || branch.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "Please fill in all fields.");
+        return;
+    }
+
+    // ✅ Connect to the database
+    if (!QSqlDatabase::database().isOpen()) {
+        QMessageBox::critical(this, "Database Error", "Database connection is not open.");
+        return;
+    }
+
+    // 🔥 Insert the data into the `student` table
+    QSqlQuery query;
+    query.prepare("INSERT INTO student (roll, name, year, branch) VALUES (:roll, :name, :year, :branch)");
+    query.bindValue(":roll", roll);
+    query.bindValue(":name", name);
+    query.bindValue(":year", year);
+    query.bindValue(":branch", branch);
+
+    if (!query.exec()) {
+        qDebug() << "Insert Error: " << query.lastError().text();
+        QMessageBox::critical(this, "Error", "Failed to add student: " + query.lastError().text());
+        return;
+    }
+
+    // ✅ Clear the fields after successful insertion
+    ui->addRoll->clear();
+    ui->addName->clear();
+    ui->addYear->setCurrentIndex(0);
+    ui->addBranch->setCurrentIndex(0);
+
+    QMessageBox::information(this, "Success", "Student added successfully!");
+}
+
