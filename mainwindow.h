@@ -50,6 +50,8 @@ private slots:
 
     void on_addSubmit_clicked();
 
+    void on_signOut_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;

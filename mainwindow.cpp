@@ -376,3 +376,21 @@ void MainWindow::on_addSubmit_clicked()
     QMessageBox::information(this, "Success", "Student added successfully!");
 }
 
+
+void MainWindow::on_signOut_clicked()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Sign Out", "Are you sure you want to sign out?", QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        QSqlQuery query;
+        query.prepare("UPDATE admin SET skipLogin = 0");
+
+        if (!query.exec()) {
+            qDebug() << "Failed to reset auto-login:" << query.lastError().text();
+            QMessageBox::warning(this, "Error", "Failed to reset auto-login.");
+        }
+        this->close();
+    }
+}
+

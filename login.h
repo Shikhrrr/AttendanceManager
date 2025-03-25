@@ -24,6 +24,7 @@ private slots:
 private:
     Ui::Login *ui;
     void connectToDatabase();
+    void checkAutoLogin();
 };
 
 #endif // LOGIN_H

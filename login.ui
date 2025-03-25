@@ -44,13 +44,13 @@ margin-right: auto;</string>
     <string>Login</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>281</x>
      <y>219</y>
      <width>200</width>
-     <height>71</height>
+     <height>79</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
@@ -79,6 +79,19 @@ margin-right: auto;</string>
      <widget class="QLineEdit" name="username"/>
     </item>
    </layout>
+  </widget>
+  <widget class="QCheckBox" name="signedIn">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>360</y>
+     <width>151</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Keep me signed in</string>
+   </property>
   </widget>
  </widget>
  <resources/>

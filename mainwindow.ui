@@ -74,7 +74,7 @@ border-radius: 10px;</string>
            <x>20</x>
            <y>140</y>
            <width>141</width>
-           <height>231</height>
+           <height>311</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -106,6 +106,13 @@ border-radius: 10px;</string>
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QPushButton" name="signOut">
+            <property name="text">
+             <string>Sign Out</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </widget>
@@ -113,7 +120,7 @@ border-radius: 10px;</string>
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="p0">
         <widget class="QLabel" name="label_7">

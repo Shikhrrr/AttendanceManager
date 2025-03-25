@@ -6,6 +6,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QDebug>
+#include <QTimer>
 
 Login::Login(QWidget *parent)
     : QWidget(parent)
@@ -13,6 +14,7 @@ Login::Login(QWidget *parent)
 {
     ui->setupUi(this);
     connectToDatabase();
+    checkAutoLogin();  // 🔥 Check if skipLogin is enabled on startup
 }
 
 Login::~Login()
@@ -23,53 +25,48 @@ Login::~Login()
 void Login::connectToDatabase() {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 
-    // 🔥 Check and print the actual database path
+    // ✅ Use relative path for portability
     QString dbPath = QCoreApplication::applicationDirPath() + "/sample.db";
-    // qDebug() << "Database Path:" << dbPath;
-
-    // ✅ Use absolute path for testing (remove later for portability)
-    // db.setDatabaseName("C:/Users/shikh/OneDrive/Documents/AttendanceManager/sample.db");
-
-    // ✅ Use relative path (after confirming it works)
     db.setDatabaseName(dbPath);
 
     if (db.open()) {
         qDebug() << "✅ Connected to SQLite!";
-        qDebug() << "📂 Database Name: " << db.databaseName();
-
-        // // 🔥 Verify tables
-        // QSqlQuery query("SELECT name FROM sqlite_master WHERE type='table'");
-
-        // if (!query.exec()) {
-        //     QMessageBox::critical(this, "Error", "Failed to retrieve table names: " + query.lastError().text());
-        //     qDebug() << "Query Error:" << query.lastError().text();
-        //     return;
-        // }
-
-        // QString tableList;
-        // while (query.next()) {
-        //     tableList += query.value(0).toString() + "\n";
-        // }
-
-        // if (tableList.isEmpty()) {
-        //     tableList = "No tables found!";
-        // }
-
-        // QMessageBox::information(this, "Tables in Database", tableList);
-        // qDebug() << "Tables: " << tableList;
-
     } else {
-        ui->label->setText("could not connect");
+        ui->label->setText("Could not connect");
         qDebug() << "❌ Failed to connect:" << db.lastError().text();
         QMessageBox::critical(this, "Database Error", "Failed to connect: " + db.lastError().text());
+    }
+}
+
+void Login::checkAutoLogin() {
+    QSqlQuery query;
+    query.prepare("SELECT skipLogin FROM admin LIMIT 1");
+
+    if (!query.exec()) {
+        qDebug() << "Auto-login check failed: " << query.lastError().text();
+        return;
+    }
+
+    if (query.next()) {
+        int skipLogin = query.value(0).toInt();
+        if (skipLogin == 1) {
+            qDebug() << "✅ Auto-logging in...";
+
+            // ✅ Use QTimer to avoid closing issues during constructor execution
+            QTimer::singleShot(0, this, [=]() {
+                MainWindow *mw = new MainWindow();
+                mw->show();
+                this->close();
+            });
+        }
     }
 }
 
 void Login::on_login_clicked()
 {
     // Get username and password from input fields
-    username = ui->username->text();
-    password = ui->password->text();
+    username = ui->username->text().trimmed();
+    password = ui->password->text().trimmed();
 
     // ✅ Verify database connection
     if (!QSqlDatabase::database().isOpen()) {
@@ -79,38 +76,35 @@ void Login::on_login_clicked()
 
     // 🔥 Query to validate credentials
     QSqlQuery query;
-
-    // Prepare query safely
-    if (!query.prepare("SELECT * FROM admin WHERE username = :username AND password = :password")) {
-        qDebug() << "Query preparation failed: " << query.lastError().text();
-        return;
-    }
-
+    query.prepare("SELECT * FROM admin WHERE username = :username AND password = :password");
     query.bindValue(":username", username);
     query.bindValue(":password", password);
 
-    // ✅ Execute the query ONCE
     if (!query.exec()) {
         qDebug() << "Query Error: " << query.lastError().text();
         QMessageBox::warning(this, "Database Error", "Query failed: " + query.lastError().text());
         return;
     }
 
-    if (query.next()) {  // ✅ Check if there are results
-        // ✅ Valid login
+    if (query.next()) {  // ✅ Valid login
         QMessageBox::information(this, "Success", "Logged in successfully!");
 
-        // Clear input fields
-        ui->username->clear();
-        ui->password->clear();
+        // 🔥 Update skipLogin based on checkbox state
+        bool keepSignedIn = ui->signedIn->isChecked();
+        QSqlQuery updateQuery;
+        updateQuery.prepare("UPDATE admin SET skipLogin = :skip");
+        updateQuery.bindValue(":skip", keepSignedIn ? 1 : 0);
 
-        // Open MainWindow
+        if (!updateQuery.exec()) {
+            qDebug() << "Failed to update skipLogin: " << updateQuery.lastError().text();
+        }
+
+        // ✅ Open MainWindow
         MainWindow *mw = new MainWindow();
         mw->show();
-        this->hide();
+        this->close();
 
-    } else {
-        // ❌ Invalid login
+    } else {  // ❌ Invalid login
         QMessageBox::warning(this, "Invalid", "Incorrect username or password");
     }
 }
