@@ -120,7 +120,7 @@ border-radius: 10px;</string>
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="p0">
         <widget class="QLabel" name="label_7">
@@ -675,7 +675,7 @@ border-radius: 10px;</string>
           </rect>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -839,6 +839,55 @@ border-radius: 10px;</string>
           <attribute name="title">
            <string>Import from Excel</string>
           </attribute>
+          <widget class="QTableView" name="importTable">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>40</y>
+             <width>731</width>
+             <height>381</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="importButton">
+           <property name="geometry">
+            <rect>
+             <x>330</x>
+             <y>10</y>
+             <width>83</width>
+             <height>29</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Import</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="importSubmit">
+           <property name="geometry">
+            <rect>
+             <x>560</x>
+             <y>430</y>
+             <width>83</width>
+             <height>29</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Submit</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="importCancel">
+           <property name="geometry">
+            <rect>
+             <x>650</x>
+             <y>430</y>
+             <width>83</width>
+             <height>29</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Cancel</string>
+           </property>
+          </widget>
          </widget>
         </widget>
        </widget>

@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -238,7 +239,7 @@ void MainWindow::on_takeFetch_clicked()
     QString selectedBranch = ui->takeBranch->currentText();
 
     QSqlQuery query;
-    query.prepare("SELECT roll, name FROM student WHERE year = :year AND branch = :branch");
+    query.prepare("SELECT roll, name FROM student WHERE year = :year AND branch = :branch ORDER BY roll ASC");
     query.bindValue(":year", selectedYear[0]);
     query.bindValue(":branch", selectedBranch);
 
@@ -279,29 +280,8 @@ void MainWindow::on_takeFetch_clicked()
     // ✅ Set the model to the `QTableView`
     ui->studentTable->setModel(model);
     ui->studentTable->resizeColumnsToContents();
+    ui->studentTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
-
-
-// void MainWindow::on_pushButton_clicked()
-// {
-//         QSqlQuery query;
-//         for (int i = 0; i < studentList.size(); i++) {
-//             int studentId = studentList[i].id;
-//             QString status = (checkboxList[i]->isChecked()) ? "Present" : "Absent";
-
-//             query.prepare("INSERT INTO attendance (student_id, teacher_id, status, date) VALUES (:student_id, :teacher_id, :status, DATE('now'))");
-//             query.bindValue(":student_id", studentId);
-//             query.bindValue(":teacher_id", loggedInTeacherId);
-//             query.bindValue(":status", status);
-
-//             if (!query.exec()) {
-//                 qDebug() << "Error inserting attendance:" << query.lastError().text();
-//             }
-//         }
-//         qDebug() << "Attendance submitted successfully!";
-
-// }
-
 
 void MainWindow::on_takeMarkAll_clicked()
 {
@@ -394,3 +374,130 @@ void MainWindow::on_signOut_clicked()
     }
 }
 
+
+// EXCEL IMPORT FEATURE
+
+
+// void MainWindow::on_importButton_clicked()
+// {
+//     excelFilePath = QFileDialog::getOpenFileName(this, "Select Excel File", "", "Excel Files (*.xlsx)");
+
+//     if (excelFilePath.isEmpty()) {
+//         QMessageBox::warning(this, "No File Selected", "Please select an Excel file.");
+//         return;
+//     }
+
+//     QXlsx::Document xlsx = QXlsx::Document(excelFilePath);
+//     if (xlsx.load()) {
+//         qDebug() << "Excel file loaded successfully!";
+//     } else {
+//         qDebug() << "Failed to load Excel file!";
+//     }
+
+
+//     if (!xlsx.load()) {
+//         QMessageBox::critical(this, "Error", "Failed to load Excel file.");
+//         return;
+//     }
+
+//     // Initialize model to display Excel data
+//     if (importModel) {
+//         delete importModel;
+//     }
+//     importModel = new QStandardItemModel(this);
+
+//     // Read data into model
+//     int rowCount = 0;
+//     int colCount = 0;
+
+//     for (int row = 1; !xlsx.read(row, 1).isNull(); ++row) {
+//         QList<QStandardItem *> rowData;
+//         colCount = 0;
+
+//         for (int col = 1; !xlsx.read(row, col).isNull(); ++col) {
+//             QVariant value = xlsx.read(row, col);
+//             rowData.append(new QStandardItem(value.toString()));
+//             colCount++;
+//         }
+
+//         importModel->appendRow(rowData);
+//         rowCount++;
+//     }
+
+//     if (rowCount == 0 || colCount == 0) {
+//         QMessageBox::warning(this, "Empty File", "The Excel file is empty.");
+//         return;
+//     }
+
+//     // Set model to the table view
+//     ui->importTable->setModel(importModel);
+//     ui->importTable->resizeColumnsToContents();
+//     QMessageBox::information(this, "Success", "Excel data loaded successfully!");
+// }
+
+
+// void MainWindow::on_importSubmit_clicked()
+// {
+//     if (!importModel) {
+//         QMessageBox::warning(this, "No Data", "No data to import.");
+//         return;
+//     }
+
+//     QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Import",
+//                                                               "Are you sure you want to import this data?",
+//                                                               QMessageBox::Yes | QMessageBox::No);
+
+//     if (reply != QMessageBox::Yes) {
+//         return;
+//     }
+
+//     QSqlDatabase db = QSqlDatabase::database();
+//     if (!db.isOpen()) {
+//         QMessageBox::critical(this, "Database Error", "Database is not open.");
+//         return;
+//     }
+
+//     QSqlQuery query;
+//     bool errorOccurred = false;
+
+//     for (int row = 0; row < importModel->rowCount(); ++row) {
+//         QString roll = importModel->item(row, 0)->text();
+//         QString name = importModel->item(row, 1)->text();
+//         QString year = importModel->item(row, 2)->text();
+//         QString branch = importModel->item(row, 3)->text();
+
+//         query.prepare("INSERT OR IGNORE INTO student (roll, name, year, branch) VALUES (:roll, :name, :year, :branch)");
+//         query.bindValue(":roll", roll);
+//         query.bindValue(":name", name);
+//         query.bindValue(":year", year);
+//         query.bindValue(":branch", branch);
+
+//         if (!query.exec()) {
+//             qDebug() << "Insert failed for row" << row << ":" << query.lastError().text();
+//             errorOccurred = true;
+//         }
+//     }
+
+//     if (errorOccurred) {
+//         QMessageBox::warning(this, "Partial Import", "Some rows could not be imported.");
+//     } else {
+//         QMessageBox::information(this, "Success", "All data imported successfully!");
+//     }
+
+//     // Clear the table view
+//     ui->importTable->setModel(nullptr);
+//     delete importModel;
+//     importModel = nullptr;
+// }
+
+// void MainWindow::on_importCancel_clicked()
+// {
+//     if (importModel) {
+//         delete importModel;
+//         importModel = nullptr;
+//     }
+
+//     ui->importTable->setModel(nullptr);
+//     excelFilePath.clear();
+//     QMessageBox::information(this, "Cancelled", "Import cancelled and table cleared.");
+// }

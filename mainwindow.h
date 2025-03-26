@@ -3,6 +3,7 @@
 
 #include "ui_mainwindow.h"
 #include <QMainWindow>
+#include <QStandardItemModel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -52,6 +53,12 @@ private slots:
 
     void on_signOut_clicked();
 
+    // void on_importButton_clicked();
+
+    // void on_importSubmit_clicked();
+
+    // void on_importCancel_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;
@@ -59,5 +66,7 @@ private:
     QString username;
     QString password;
     void connectToDatabase();
+    QStandardItemModel *importModel;  // To display Excel data
+    QString excelFilePath;
 };
 #endif // MAINWINDOW_H
