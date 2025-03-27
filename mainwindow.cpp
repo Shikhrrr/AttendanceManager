@@ -9,6 +9,7 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QFileDialog>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -377,127 +378,124 @@ void MainWindow::on_signOut_clicked()
 
 // EXCEL IMPORT FEATURE
 
+void MainWindow::on_importCSV_clicked()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Open CSV File", "", "CSV Files (*.csv)");
 
-// void MainWindow::on_importButton_clicked()
-// {
-//     excelFilePath = QFileDialog::getOpenFileName(this, "Select Excel File", "", "Excel Files (*.xlsx)");
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "No file selected.");
+        return;
+    }
 
-//     if (excelFilePath.isEmpty()) {
-//         QMessageBox::warning(this, "No File Selected", "Please select an Excel file.");
-//         return;
-//     }
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Error", "Failed to open the file.");
+        return;
+    }
 
-//     QXlsx::Document xlsx = QXlsx::Document(excelFilePath);
-//     if (xlsx.load()) {
-//         qDebug() << "Excel file loaded successfully!";
-//     } else {
-//         qDebug() << "Failed to load Excel file!";
-//     }
+    QTextStream in(&file);
+    QStringList headers;
+    QVector<QStringList> data;
 
+    // Read the headers
+    if (!in.atEnd()) {
+        headers = in.readLine().split(",");
+        ui->tableCSV->setColumnCount(headers.size());
+        ui->tableCSV->setHorizontalHeaderLabels(headers);
+    }
 
-//     if (!xlsx.load()) {
-//         QMessageBox::critical(this, "Error", "Failed to load Excel file.");
-//         return;
-//     }
+    // Read the data rows
+    while (!in.atEnd()) {
+        QStringList row = in.readLine().split(",");
+        data.append(row);
+    }
 
-//     // Initialize model to display Excel data
-//     if (importModel) {
-//         delete importModel;
-//     }
-//     importModel = new QStandardItemModel(this);
+    // Set the row count
+    ui->tableCSV->setRowCount(data.size());
 
-//     // Read data into model
-//     int rowCount = 0;
-//     int colCount = 0;
+    // Populate the table
+    for (int i = 0; i < data.size(); ++i) {
+        const QStringList& row = data[i];
+        for (int j = 0; j < row.size(); ++j) {
+            QTableWidgetItem *item = new QTableWidgetItem(row[j]);
+            ui->tableCSV->setItem(i, j, item);
+        }
+    }
 
-//     for (int row = 1; !xlsx.read(row, 1).isNull(); ++row) {
-//         QList<QStandardItem *> rowData;
-//         colCount = 0;
-
-//         for (int col = 1; !xlsx.read(row, col).isNull(); ++col) {
-//             QVariant value = xlsx.read(row, col);
-//             rowData.append(new QStandardItem(value.toString()));
-//             colCount++;
-//         }
-
-//         importModel->appendRow(rowData);
-//         rowCount++;
-//     }
-
-//     if (rowCount == 0 || colCount == 0) {
-//         QMessageBox::warning(this, "Empty File", "The Excel file is empty.");
-//         return;
-//     }
-
-//     // Set model to the table view
-//     ui->importTable->setModel(importModel);
-//     ui->importTable->resizeColumnsToContents();
-//     QMessageBox::information(this, "Success", "Excel data loaded successfully!");
-// }
+    file.close();
+    QMessageBox::information(this, "Success", "CSV data imported successfully!");
+}
 
 
-// void MainWindow::on_importSubmit_clicked()
-// {
-//     if (!importModel) {
-//         QMessageBox::warning(this, "No Data", "No data to import.");
-//         return;
-//     }
+void MainWindow::on_submitCSV_clicked()
+{
+    QSqlDatabase db = QSqlDatabase::database();
 
-//     QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Import",
-//                                                               "Are you sure you want to import this data?",
-//                                                               QMessageBox::Yes | QMessageBox::No);
+    if (!db.isOpen()) {
+        QMessageBox::critical(this, "Database Error", "Database connection is not open.");
+        return;
+    }
 
-//     if (reply != QMessageBox::Yes) {
-//         return;
-//     }
+    int rowCount = ui->tableCSV->rowCount();
+    int colCount = ui->tableCSV->columnCount();
 
-//     QSqlDatabase db = QSqlDatabase::database();
-//     if (!db.isOpen()) {
-//         QMessageBox::critical(this, "Database Error", "Database is not open.");
-//         return;
-//     }
+    if (rowCount == 0 || colCount == 0) {
+        QMessageBox::warning(this, "Warning", "No data to submit.");
+        return;
+    }
 
-//     QSqlQuery query;
-//     bool errorOccurred = false;
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Submission",
+                                                              "Are you sure you want to add all the data into the database?",
+                                                              QMessageBox::Yes | QMessageBox::No);
 
-//     for (int row = 0; row < importModel->rowCount(); ++row) {
-//         QString roll = importModel->item(row, 0)->text();
-//         QString name = importModel->item(row, 1)->text();
-//         QString year = importModel->item(row, 2)->text();
-//         QString branch = importModel->item(row, 3)->text();
+    if (reply != QMessageBox::Yes) {
+        return;
+    }
 
-//         query.prepare("INSERT OR IGNORE INTO student (roll, name, year, branch) VALUES (:roll, :name, :year, :branch)");
-//         query.bindValue(":roll", roll);
-//         query.bindValue(":name", name);
-//         query.bindValue(":year", year);
-//         query.bindValue(":branch", branch);
+    db.transaction();  // Start transaction for faster insertion
 
-//         if (!query.exec()) {
-//             qDebug() << "Insert failed for row" << row << ":" << query.lastError().text();
-//             errorOccurred = true;
-//         }
-//     }
+    QSqlQuery query(db);
 
-//     if (errorOccurred) {
-//         QMessageBox::warning(this, "Partial Import", "Some rows could not be imported.");
-//     } else {
-//         QMessageBox::information(this, "Success", "All data imported successfully!");
-//     }
+    for (int row = 0; row < rowCount; ++row) {
+        QStringList values;
 
-//     // Clear the table view
-//     ui->importTable->setModel(nullptr);
-//     delete importModel;
-//     importModel = nullptr;
-// }
+        for (int col = 0; col < colCount; ++col) {
+            QTableWidgetItem *item = ui->tableCSV->item(row, col);
+            values.append(item ? item->text() : "NULL");
+        }
 
-// void MainWindow::on_importCancel_clicked()
-// {
-//     if (importModel) {
-//         delete importModel;
-//         importModel = nullptr;
-//     }
+        // Assuming your table columns are (roll, name, attendance, etc.)
+        QString sql = QString("INSERT INTO students (roll, name, attendance) VALUES ('%1', '%2', '%3')")
+                          .arg(values.value(0, ""))
+                          .arg(values.value(1, ""))
+                          .arg(values.value(2, ""));
 
-//     ui->importTable->setModel(nullptr);
-//     excelFilePath.clear();
-//     QMessageBox::information(this, "Cancelled", "Import cancelled and table cleared.");
-// }
+        if (!query.exec(sql)) {
+            qDebug() << "Error inserting row:" << query.lastError().text();
+            QMessageBox::critical(this, "Database Error", "Failed to insert some rows.");
+            db.rollback();
+            return;
+        }
+    }
+
+    db.commit();
+    QMessageBox::information(this, "Success", "Data inserted into the database successfully!");
+}
+
+
+void MainWindow::on_cancelCSV_clicked()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Clear Table", "Are you sure you want to clear the table?",
+                                  QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        // Clear the table preview
+        ui->tableCSV->clear();
+        ui->tableCSV->setRowCount(0);
+        ui->tableCSV->setColumnCount(0);
+
+        QMessageBox::information(this, "Cleared", "The table preview has been cleared.");
+    }
+}
+

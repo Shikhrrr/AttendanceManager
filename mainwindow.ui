@@ -837,22 +837,12 @@ border-radius: 10px;</string>
          </widget>
          <widget class="QWidget" name="tab_2">
           <attribute name="title">
-           <string>Import from Excel</string>
+           <string>Import</string>
           </attribute>
-          <widget class="QTableView" name="importTable">
+          <widget class="QPushButton" name="importCSV">
            <property name="geometry">
             <rect>
-             <x>10</x>
-             <y>40</y>
-             <width>731</width>
-             <height>381</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="importButton">
-           <property name="geometry">
-            <rect>
-             <x>330</x>
+             <x>320</x>
              <y>10</y>
              <width>83</width>
              <height>29</height>
@@ -862,11 +852,21 @@ border-radius: 10px;</string>
             <string>Import</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="importSubmit">
+          <widget class="QTableWidget" name="tableCSV">
            <property name="geometry">
             <rect>
-             <x>560</x>
-             <y>430</y>
+             <x>10</x>
+             <y>50</y>
+             <width>721</width>
+             <height>361</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="submitCSV">
+           <property name="geometry">
+            <rect>
+             <x>540</x>
+             <y>420</y>
              <width>83</width>
              <height>29</height>
             </rect>
@@ -875,11 +875,11 @@ border-radius: 10px;</string>
             <string>Submit</string>
            </property>
           </widget>
-          <widget class="QPushButton" name="importCancel">
+          <widget class="QPushButton" name="cancelCSV">
            <property name="geometry">
             <rect>
-             <x>650</x>
-             <y>430</y>
+             <x>630</x>
+             <y>420</y>
              <width>83</width>
              <height>29</height>
             </rect>
