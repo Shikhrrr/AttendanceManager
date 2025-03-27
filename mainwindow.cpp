@@ -430,56 +430,45 @@ void MainWindow::on_importCSV_clicked()
 void MainWindow::on_submitCSV_clicked()
 {
     QSqlDatabase db = QSqlDatabase::database();
-
     if (!db.isOpen()) {
-        QMessageBox::critical(this, "Database Error", "Database connection is not open.");
+        QMessageBox::warning(this, "Database Error", "Database is not connected.");
         return;
     }
 
-    int rowCount = ui->tableCSV->rowCount();
-    int colCount = ui->tableCSV->columnCount();
-
-    if (rowCount == 0 || colCount == 0) {
-        QMessageBox::warning(this, "Warning", "No data to submit.");
+    if (ui->tableCSV->rowCount() == 0) {
+        QMessageBox::warning(this, "Empty Table", "There is no data to submit.");
         return;
     }
-
-    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Submission",
-                                                              "Are you sure you want to add all the data into the database?",
-                                                              QMessageBox::Yes | QMessageBox::No);
-
-    if (reply != QMessageBox::Yes) {
-        return;
-    }
-
-    db.transaction();  // Start transaction for faster insertion
 
     QSqlQuery query(db);
+    bool allRowsInserted = true;
 
-    for (int row = 0; row < rowCount; ++row) {
+    db.transaction();  // Start a transaction for batch insertion
+
+    for (int row = 0; row < ui->tableCSV->rowCount(); ++row) {
         QStringList values;
 
-        for (int col = 0; col < colCount; ++col) {
-            QTableWidgetItem *item = ui->tableCSV->item(row, col);
-            values.append(item ? item->text() : "NULL");
+        for (int col = 0; col < ui->tableCSV->columnCount(); ++col) {
+            values << "'" + ui->tableCSV->item(row, col)->text().trimmed() + "'";
         }
 
-        // Assuming your table columns are (roll, name, attendance, etc.)
-        QString sql = QString("INSERT INTO students (roll, name, attendance) VALUES ('%1', '%2', '%3')")
-                          .arg(values.value(0, ""))
-                          .arg(values.value(1, ""))
-                          .arg(values.value(2, ""));
+        QString sqlQuery = QString("INSERT INTO student (roll, name, year, branch) VALUES (%1)").arg(values.join(", "));
 
-        if (!query.exec(sql)) {
+        qDebug() << "Executing query:" << sqlQuery;  // Log the query
+
+        if (!query.exec(sqlQuery)) {
             qDebug() << "Error inserting row:" << query.lastError().text();
-            QMessageBox::critical(this, "Database Error", "Failed to insert some rows.");
-            db.rollback();
-            return;
+            allRowsInserted = false;
         }
     }
 
-    db.commit();
-    QMessageBox::information(this, "Success", "Data inserted into the database successfully!");
+    if (allRowsInserted) {
+        db.commit();  // Commit the transaction if all rows are inserted successfully
+        QMessageBox::information(this, "Success", "All rows inserted successfully.");
+    } else {
+        db.rollback();  // Rollback in case of failure
+        QMessageBox::warning(this, "Insert Failed", "Failed to insert some rows. Check the console for errors.");
+    }
 }
 
 
