@@ -10,6 +10,7 @@
 #include <QStandardItem>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QSqlQueryModel>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -230,9 +231,6 @@ void MainWindow::on_gotoTakeAttendance_clicked()
 
 //for taking attendance
 
-
-#include <QSqlQueryModel>
-
 void MainWindow::on_takeFetch_clicked()
 {
     ui->takeMarkAll->show();
@@ -282,6 +280,8 @@ void MainWindow::on_takeFetch_clicked()
     ui->studentTable->setModel(model);
     ui->studentTable->resizeColumnsToContents();
     ui->studentTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->studentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
 }
 
 void MainWindow::on_takeMarkAll_clicked()
