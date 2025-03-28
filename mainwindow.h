@@ -53,11 +53,11 @@ private slots:
 
     void on_signOut_clicked();
 
-    void on_importButton_clicked();
+    // void on_importButton_clicked();
 
-    void on_importSubmit_clicked();
+    // void on_importSubmit_clicked();
 
-    void on_importCancel_clicked();
+    // void on_importCancel_clicked();
 
     void on_importCSV_clicked();
 
