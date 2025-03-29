@@ -73,13 +73,25 @@ void MainWindow::connectToDatabase() {
     }
 }
 
+//SWITCH TABS
+
 void MainWindow::on_editProfile_clicked()
 {
-    // checkProfile *cp = new checkProfile(this);
-    // cp->show();
-    // cp->setModal(true);
     ui->confirmDetailsGroup->show();
 }
+void MainWindow::on_gotoProfile_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+}
+void MainWindow::on_gotoViewAttendance_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(2);
+}
+void MainWindow::on_gotoTakeAttendance_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
 
 void MainWindow::on_collapseSideBar_clicked()
 {
@@ -92,12 +104,6 @@ void MainWindow::on_collapseSideBar_clicked()
     }
 }
 
-
-void MainWindow::on_gotoProfile_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(1);
-}
-
 void MainWindow::eraseDetails() {
     ui->username->clear();
     ui->password->clear();
@@ -108,7 +114,6 @@ void MainWindow::on_cancel_clicked()
     ui->confirmDetailsGroup->hide();
     eraseDetails();
 }
-
 
 void MainWindow::on_ok_clicked()
 {
@@ -218,17 +223,6 @@ void MainWindow::on_reset_clicked()
 
     ui->currentName->setText(newUsername);
 }
-
-void MainWindow::on_gotoViewAttendance_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(2);
-}
-
-void MainWindow::on_gotoTakeAttendance_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(0);
-}
-
 //for taking attendance
 
 void MainWindow::on_takeFetch_clicked()
