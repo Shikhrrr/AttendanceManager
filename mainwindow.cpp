@@ -46,6 +46,19 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "Query failed: " << query.lastError().text();
         ui->currentName->setText("Error fetching username");
     }
+    // Apply dynamic stretching to keep proportions on window resize
+    // ui->viewAttendanceLayout->setRowStretch(0, 1);
+    // ui->viewAttendanceLayout->setRowStretch(1, 5);
+    // ui->viewAttendanceLayout->setRowStretch(2, 1);
+
+    // ui->viewAttendanceLayout->setColumnStretch(0, 1);
+    // ui->viewAttendanceLayout->setColumnStretch(1, 1);
+    // ui->viewAttendanceLayout->setColumnStretch(2, 1);
+
+    // Ensure the parent widget is using this layout
+    // ui->stackedWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    // ui->viewPageTab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    // ui->importCSV->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 //checking if this works
@@ -480,5 +493,349 @@ void MainWindow::on_cancelCSV_clicked()
 
         QMessageBox::information(this, "Cleared", "The table preview has been cleared.");
     }
+}
+
+
+void MainWindow::on_takeSubmit_clicked()
+{
+    // Get today's date
+    QString todayDate = QDate::currentDate().toString("yyyy-MM-dd");
+
+    // Get the selected year and branch
+    int year = ui->takeYear->currentText().toInt();
+    QString branch = ui->takeBranch->currentText();
+
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+
+    // Step 1: Get date_id for today's date (or insert if not exists)
+    query.prepare("SELECT date_id FROM attendance_dates WHERE date = ?");
+    query.addBindValue(todayDate);
+    if (!query.exec() || !query.next()) {
+        // If the date doesn't exist, insert it
+        query.prepare("INSERT INTO attendance_dates (date) VALUES (?)");
+        query.addBindValue(todayDate);
+        if (!query.exec()) {
+            qDebug() << "Error inserting attendance date:" << query.lastError();
+            return;
+        }
+        // Retrieve the new date_id
+        int newDateId = query.lastInsertId().toInt();
+        query.prepare("SELECT date_id FROM attendance_dates WHERE date = ?");
+        query.addBindValue(todayDate);
+        if (!query.exec() || !query.next()) {
+            qDebug() << "Error retrieving new date_id:" << query.lastError();
+            return;
+        }
+    }
+    int dateId = query.value(0).toInt();  // Retrieved date_id
+
+    // Step 2: Iterate through studentTable to mark attendance
+    for (int row = 0; row < ui->studentTable->model()->rowCount(); ++row) {
+        QModelIndex index = ui->studentTable->model()->index(row, 0);
+        QString roll = index.data().toString();
+
+        QModelIndex checkboxIndex = ui->studentTable->model()->index(row, 2);
+        bool isChecked = checkboxIndex.data(Qt::CheckStateRole) == Qt::Checked;
+
+        QString status = isChecked ? "Present" : "Absent";
+
+        // Step 3: Check if attendance for this student on this date already exists
+        query.prepare("SELECT COUNT(*) FROM attendance_records WHERE roll = ? AND date_id = ?");
+        query.addBindValue(roll);
+        query.addBindValue(dateId);
+        if (!query.exec() || !query.next()) {
+            qDebug() << "Error checking existing attendance:" << query.lastError();
+            continue;
+        }
+
+        int count = query.value(0).toInt();
+        if (count == 0) {  // Insert only if attendance is not already marked
+            query.prepare("INSERT INTO attendance_records (roll, date_id, status) VALUES (?, ?, ?)");
+            query.addBindValue(roll);
+            query.addBindValue(dateId);
+            query.addBindValue(status);
+
+            if (!query.exec()) {
+                qDebug() << "Error inserting attendance record:" << query.lastError();
+            }
+        } else {
+            qDebug() << "Attendance already marked for student" << roll << " on " << todayDate;
+        }
+    }
+
+    QMessageBox::information(this, "Success", "Attendance submitted successfully!");
+}
+
+
+void MainWindow::on_viewDateSubmit_clicked()
+{
+    QString date = ui->dateEdit->date().toString("yyyy-MM-dd");  // Selected date
+    int year = ui->viewYear2->currentText().toInt();         // Selected year
+    QString branch = ui->viewBranch2->currentText();         // Selected branch
+
+    // Step 2: Prepare SQL Query to fetch attendance records for given date, year, and branch
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT s.roll, s.name, ar.status
+        FROM student s
+        JOIN attendance_records ar ON s.roll = ar.roll
+        JOIN attendance_dates ad ON ar.date_id = ad.date_id
+        WHERE ad.date = ? AND s.year = ? AND s.branch = ?
+        ORDER BY s.roll;
+    )");
+
+    query.addBindValue(date);
+    query.addBindValue(year);
+    query.addBindValue(branch);
+
+    // Step 3: Execute Query
+    if (!query.exec()) {
+        qDebug() << "Error fetching attendance records:" << query.lastError();
+        return;
+    }
+
+    // Step 4: Prepare Table Model
+    QStandardItemModel *model = new QStandardItemModel(this);
+    model->setColumnCount(3);
+    model->setHeaderData(0, Qt::Horizontal, "Roll No");
+    model->setHeaderData(1, Qt::Horizontal, "Name");
+    model->setHeaderData(2, Qt::Horizontal, "Status");
+
+    // Step 5: Populate Data into Table
+    int row = 0;
+    while (query.next()) {
+        model->insertRow(row);
+        model->setItem(row, 0, new QStandardItem(query.value(0).toString())); // Roll No
+        model->setItem(row, 1, new QStandardItem(query.value(1).toString())); // Name
+        model->setItem(row, 2, new QStandardItem(query.value(2).toString())); // Attendance Status
+        row++;
+    }
+
+    // Step 6: Set the Model to the TableView
+    ui->viewDateTable->setModel(model);
+    ui->viewDateTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+}
+
+
+void MainWindow::on_viewSearch3_clicked()
+{
+    QString roll = ui->viewRoll3->text().trimmed();
+    if (roll.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Please enter a roll number.");
+        return;
+    }
+
+    QSqlQuery query;
+
+    // Get student's year and branch
+    query.prepare(R"(
+        SELECT year, branch FROM student WHERE roll = ?
+    )");
+    query.addBindValue(roll);
+
+    if (!query.exec() || !query.next()) {
+        QMessageBox::warning(this, "Not Found", "No student found with this roll number.");
+        return;
+    }
+
+    int year = query.value(0).toInt();
+    QString branch = query.value(1).toString();
+
+    // Get total classes held for that year and branch
+    query.prepare(R"(
+        SELECT COUNT(DISTINCT ad.date_id)
+        FROM attendance_dates ad
+        JOIN attendance_records ar ON ad.date_id = ar.date_id
+        JOIN student s ON ar.roll = s.roll
+        WHERE s.year = ? AND s.branch = ?
+    )");
+    query.addBindValue(year);
+    query.addBindValue(branch);
+
+    int totalClassesHeld = 0;
+    if (query.exec() && query.next()) {
+        totalClassesHeld = query.value(0).toInt();
+    }
+
+    // Get total classes attended by the student
+    query.prepare(R"(
+        SELECT COUNT(*) FROM attendance_records
+        WHERE roll = ? AND status = 'Present'
+    )");
+    query.addBindValue(roll);
+
+    int totalClassesAttended = 0;
+    if (query.exec() && query.next()) {
+        totalClassesAttended = query.value(0).toInt();
+    }
+
+    // Calculate attendance percentage
+    double percentage = (totalClassesHeld == 0) ? 0 : (static_cast<double>(totalClassesAttended) / totalClassesHeld) * 100;
+
+    // Update the QTableWidget (viewStudentSearchTable)
+    ui->viewStudentSearchTable->setRowCount(1);  // Set 1 row for the student's summary
+    ui->viewStudentSearchTable->setColumnCount(4); // Roll, Total Held, Total Attended, Percentage
+
+    QStringList headers = {"Roll No", "Total Classes Attended", "Total Classes Held", "Attendance %"};
+    ui->viewStudentSearchTable->setHorizontalHeaderLabels(headers);
+
+    ui->viewStudentSearchTable->setItem(0, 0, new QTableWidgetItem(roll));
+    ui->viewStudentSearchTable->setItem(0, 1, new QTableWidgetItem(QString::number(totalClassesAttended)));
+    ui->viewStudentSearchTable->setItem(0, 2, new QTableWidgetItem(QString::number(totalClassesHeld)));
+    ui->viewStudentSearchTable->setItem(0, 3, new QTableWidgetItem(QString::number(percentage, 'f', 2) + " %"));
+
+    ui->viewStudentSearchTable->resizeColumnsToContents();
+    ui->viewStudentSearchTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->viewStudentSearchTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+}
+
+
+void MainWindow::on_viewStatistics_clicked()
+{
+    int year = ui->viewYear3->currentText().trimmed().toInt();
+    QString branch = ui->viewBranch3->currentText().trimmed();
+
+    // Prepare query to fetch attendance statistics
+    QSqlQuery query;
+    query.prepare(R"(
+    SELECT
+        s.roll,
+        s.name,
+        COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) AS classes_attended,
+        (SELECT COUNT(DISTINCT ad.date_id)
+         FROM attendance_dates ad
+         JOIN attendance_records ar2 ON ad.date_id = ar2.date_id
+         JOIN student s2 ON ar2.roll = s2.roll
+         WHERE s2.year = s.year AND s2.branch = s.branch) AS total_classes_held,
+        ROUND(
+            (COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) * 100.0) /
+            NULLIF((SELECT COUNT(DISTINCT ad.date_id)
+                    FROM attendance_dates ad
+                    JOIN attendance_records ar2 ON ad.date_id = ar2.date_id
+                    JOIN student s2 ON ar2.roll = s2.roll
+                    WHERE s2.year = s.year AND s2.branch = s.branch), 0),
+            2
+        ) AS percentage
+    FROM student s
+    LEFT JOIN attendance_records ar ON s.roll = ar.roll
+    WHERE s.year = ? AND s.branch = ?
+    GROUP BY s.roll, s.name
+    ORDER BY s.roll;
+)");
+
+    query.addBindValue(year);
+    query.addBindValue(branch);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching attendance statistics:" << query.lastError().text();
+        return;
+    }
+
+    // Set up model for QTableView
+    QStandardItemModel *model = new QStandardItemModel(0, 4, this);
+    model->setHorizontalHeaderLabels({"Roll Number", "Name", "Classes Attended", "Total Classes Held", "Percentage"});
+
+    // Populate data from the query
+    int row = 0;
+    while (query.next()) {
+        model->insertRow(row);
+        model->setItem(row, 0, new QStandardItem(query.value(0).toString())); // Roll Number
+        model->setItem(row, 1, new QStandardItem(query.value(1).toString())); // Name
+        model->setItem(row, 2, new QStandardItem(query.value(2).toString())); // Classes Attended
+        model->setItem(row, 3, new QStandardItem(query.value(3).toString())); // Total Classes Held
+        model->setItem(row, 4, new QStandardItem(query.value(4).toString() + "%")); // Percentage
+        row++;
+    }
+
+    // Set model to QTableView
+    ui->viewStatisticsTable->setModel(model);
+    ui->viewStatisticsTable->resizeColumnsToContents();
+    ui->viewStatisticsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->viewStatisticsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+}
+
+
+
+//this needs to be fixed
+
+
+void MainWindow::on_viewSearch4_clicked()
+{
+    // Get values from UI
+    int year = ui->viewYear3->currentText().trimmed().toInt();
+    QString branch = ui->viewBranch3->currentText().trimmed();
+    int minPercentage = ui->viewLessThan->value();
+    int maxPercentage = ui->viewMoreThan->value();
+
+    // Debugging: Print values
+    qDebug() << "Year: " << year << ", Branch: " << branch;
+    qDebug() << "Percentage Range: " << minPercentage << " - " << maxPercentage;
+
+    QSqlQuery query;
+    query.prepare(R"(
+WITH total_classes AS (
+    SELECT COUNT(DISTINCT ad.date_id) AS total_classes_held
+    FROM attendance_dates ad
+    JOIN attendance_records ar ON ad.date_id = ar.date_id
+    JOIN student s ON ar.roll = s.roll
+    WHERE s.year = 2025 AND s.branch = 'Computer Science'
+)
+SELECT
+    s.roll,
+    s.name,
+    COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) AS classes_attended,
+    (SELECT total_classes_held FROM total_classes) AS total_classes_held,
+    ROUND(
+        (COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) * 100.0) /
+        NULLIF((SELECT total_classes_held FROM total_classes), 0),
+        2
+    ) AS percentage
+FROM student s
+LEFT JOIN attendance_records ar ON s.roll = ar.roll
+WHERE s.year = 2025 AND s.branch = 'Computer Science'
+GROUP BY s.roll, s.name;
+)");
+
+    query.addBindValue(year);
+    query.addBindValue(branch);
+    query.addBindValue(year); // Again for the CTE subquery
+    query.addBindValue(branch); // Again for the CTE subquery
+    query.addBindValue(minPercentage);
+    query.addBindValue(maxPercentage);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching filtered attendance: " << query.lastError().text();
+        return;
+    }
+
+    // Check if results are returned
+    if (!query.next()) {
+        qDebug() << "No data found for the given filters.";
+        QMessageBox::critical(this, "No data", "No data found for given filters");
+        return;
+    }
+
+    // Create a model for QTableView
+    QStandardItemModel *model = new QStandardItemModel(0, 5, this);
+    model->setHorizontalHeaderLabels({"Roll Number", "Name", "Classes Attended", "Total Classes Held", "Percentage"});
+
+    // Populate model
+    int row = 0;
+    do {
+        model->insertRow(row);
+        model->setItem(row, 0, new QStandardItem(query.value(0).toString())); // Roll Number
+        model->setItem(row, 1, new QStandardItem(query.value(1).toString())); // Name
+        model->setItem(row, 2, new QStandardItem(query.value(2).toString())); // Classes Attended
+        model->setItem(row, 3, new QStandardItem(query.value(3).toString())); // Total Classes Held
+        model->setItem(row, 4, new QStandardItem(query.value(4).toString() + "%")); // Percentage
+        row++;
+    } while (query.next());
+
+    // Set model to QTableView
+    ui->viewStatisticsTable->setModel(model);
+    ui->viewStatisticsTable->resizeColumnsToContents();
+    ui->viewStatisticsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->viewStatisticsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 

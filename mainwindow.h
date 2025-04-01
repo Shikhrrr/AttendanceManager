@@ -65,7 +65,17 @@ private slots:
 
     void on_cancelCSV_clicked();
 
-private:
+    void on_takeSubmit_clicked();
+
+    void on_viewDateSubmit_clicked();
+
+    void on_viewSearch3_clicked();
+
+    void on_viewStatistics_clicked();
+
+    void on_viewSearch4_clicked();
+
+    private:
     Ui::MainWindow *ui;
     int collapsedWidth;
     int fullWidth;
