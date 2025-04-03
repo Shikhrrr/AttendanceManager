@@ -789,8 +789,8 @@ border-radius: 10px;</string>
              <widget class="QLabel" name="label_27">
               <property name="geometry">
                <rect>
-                <x>50</x>
-                <y>10</y>
+                <x>30</x>
+                <y>20</y>
                 <width>111</width>
                 <height>20</height>
                </rect>
@@ -999,7 +999,7 @@ border-radius: 10px;</string>
                <string>More Than</string>
               </property>
              </widget>
-             <widget class="QTableWidget" name="tableWidget">
+             <widget class="QTableWidget" name="viewQueryTable">
               <property name="geometry">
                <rect>
                 <x>20</x>

@@ -760,82 +760,79 @@ void MainWindow::on_viewStatistics_clicked()
 //this needs to be fixed
 
 
-void MainWindow::on_viewSearch4_clicked()
-{
-    // Get values from UI
-    int year = ui->viewYear3->currentText().trimmed().toInt();
-    QString branch = ui->viewBranch3->currentText().trimmed();
+void MainWindow::on_viewSearch4_clicked() {
+    // 1. Get UI inputs
+    int year = ui->viewYear4->currentText().trimmed().toInt();
+    QString branch = ui->viewBranch4->currentText().trimmed();
     int minPercentage = ui->viewLessThan->value();
     int maxPercentage = ui->viewMoreThan->value();
 
-    // Debugging: Print values
-    qDebug() << "Year: " << year << ", Branch: " << branch;
-    qDebug() << "Percentage Range: " << minPercentage << " - " << maxPercentage;
+    qDebug() << "Searching for: Year=" << year
+             << "Branch=" << branch
+             << "Percentage=" << minPercentage << "-" << maxPercentage;
 
+    // 2. Execute Query
     QSqlQuery query;
     query.prepare(R"(
-WITH total_classes AS (
-    SELECT COUNT(DISTINCT ad.date_id) AS total_classes_held
-    FROM attendance_dates ad
-    JOIN attendance_records ar ON ad.date_id = ar.date_id
-    JOIN student s ON ar.roll = s.roll
-    WHERE s.year = 2025 AND s.branch = 'Computer Science'
-)
-SELECT
-    s.roll,
-    s.name,
-    COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) AS classes_attended,
-    (SELECT total_classes_held FROM total_classes) AS total_classes_held,
-    ROUND(
-        (COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) * 100.0) /
-        NULLIF((SELECT total_classes_held FROM total_classes), 0),
-        2
-    ) AS percentage
-FROM student s
-LEFT JOIN attendance_records ar ON s.roll = ar.roll
-WHERE s.year = 2025 AND s.branch = 'Computer Science'
-GROUP BY s.roll, s.name;
-)");
+        WITH total_classes AS (
+            SELECT COUNT(DISTINCT ad.date_id) AS total_classes_held
+            FROM attendance_dates ad
+            JOIN attendance_records ar ON ad.date_id = ar.date_id
+            JOIN student s ON ar.roll = s.roll
+            WHERE s.year = ? AND s.branch = ?
+        )
+        SELECT
+            s.roll,
+            s.name,
+            COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) AS attended,
+            (SELECT total_classes_held FROM total_classes) AS total,
+            ROUND(
+                (COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) * 100.0) /
+                NULLIF((SELECT total_classes_held FROM total_classes), 0),
+                2
+            ) AS percentage
+        FROM student s
+        LEFT JOIN attendance_records ar ON s.roll = ar.roll
+        WHERE s.year = ? AND s.branch = ?
+        GROUP BY s.roll, s.name
+        HAVING (percentage >= ? AND percentage <= ?) OR (percentage IS NULL)
+    )");
 
     query.addBindValue(year);
     query.addBindValue(branch);
-    query.addBindValue(year); // Again for the CTE subquery
-    query.addBindValue(branch); // Again for the CTE subquery
+    query.addBindValue(year);
+    query.addBindValue(branch);
     query.addBindValue(minPercentage);
     query.addBindValue(maxPercentage);
 
     if (!query.exec()) {
-        qDebug() << "Error fetching filtered attendance: " << query.lastError().text();
+        qDebug() << "QUERY ERROR:" << query.lastError().text();
         return;
     }
 
-    // Check if results are returned
+    // 3. Check for results
     if (!query.next()) {
-        qDebug() << "No data found for the given filters.";
-        QMessageBox::critical(this, "No data", "No data found for given filters");
+        qDebug() << "NO RECORDS FOUND. Check filters/database.";
+        ui->viewQueryTable->setRowCount(0); // Clear table
         return;
     }
 
-    // Create a model for QTableView
-    QStandardItemModel *model = new QStandardItemModel(0, 5, this);
-    model->setHorizontalHeaderLabels({"Roll Number", "Name", "Classes Attended", "Total Classes Held", "Percentage"});
+    // 4. Populate table
+    ui->viewQueryTable->setRowCount(0);
+    ui->viewQueryTable->setColumnCount(5);
+    ui->viewQueryTable->setHorizontalHeaderLabels({"Roll", "Name", "Attended", "Total", "%"});
 
-    // Populate model
-    int row = 0;
     do {
-        model->insertRow(row);
-        model->setItem(row, 0, new QStandardItem(query.value(0).toString())); // Roll Number
-        model->setItem(row, 1, new QStandardItem(query.value(1).toString())); // Name
-        model->setItem(row, 2, new QStandardItem(query.value(2).toString())); // Classes Attended
-        model->setItem(row, 3, new QStandardItem(query.value(3).toString())); // Total Classes Held
-        model->setItem(row, 4, new QStandardItem(query.value(4).toString() + "%")); // Percentage
-        row++;
+        int row = ui->viewQueryTable->rowCount();
+        ui->viewQueryTable->insertRow(row);
+        ui->viewQueryTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString()));
+        ui->viewQueryTable->setItem(row, 1, new QTableWidgetItem(query.value(1).toString()));
+        ui->viewQueryTable->setItem(row, 2, new QTableWidgetItem(query.value(2).toString()));
+        ui->viewQueryTable->setItem(row, 3, new QTableWidgetItem(query.value(3).toString()));
+        ui->viewQueryTable->setItem(row, 4, new QTableWidgetItem(
+                                                query.value(4).isNull() ? "N/A" : query.value(4).toString() + "%"
+                                                ));
     } while (query.next());
 
-    // Set model to QTableView
-    ui->viewStatisticsTable->setModel(model);
-    ui->viewStatisticsTable->resizeColumnsToContents();
-    ui->viewStatisticsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->viewStatisticsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->viewQueryTable->resizeColumnsToContents();
 }
-
