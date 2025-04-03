@@ -120,7 +120,7 @@ border-radius: 10px;</string>
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="p0">
         <widget class="QLabel" name="label_7">
@@ -460,7 +460,7 @@ border-radius: 10px;</string>
           <item row="1" column="0">
            <widget class="QTabWidget" name="viewPageTab">
             <property name="currentIndex">
-             <number>3</number>
+             <number>1</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>

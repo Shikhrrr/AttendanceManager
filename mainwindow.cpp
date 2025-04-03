@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->studentTable->installEventFilter(this);
 
+    ui->viewDateTable->installEventFilter(this);
+
     // ✅ Set first-open page
     ui->stackedWidget->setCurrentIndex(1);
 
@@ -299,28 +301,29 @@ void MainWindow::on_takeFetch_clicked()
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == ui->studentTable && event->type() == QEvent::KeyPress) {
-        QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);  // Safe cast
+    if ((obj == ui->studentTable || obj == ui->viewDateTable) && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);  // ✅ Safe cast
 
         if (keyEvent && (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)) {
-            QModelIndex currentIndex = ui->studentTable->currentIndex();
-            if (!currentIndex.isValid()) {
-                return false;
-            }
+            QTableView *tableView = qobject_cast<QTableView *>(obj);
+            if (!tableView) return false;
+
+            QModelIndex currentIndex = tableView->currentIndex();
+            if (!currentIndex.isValid()) return false;
 
             int row = currentIndex.row();
             int checkboxColumn = 2; // "Present" column
 
-            QAbstractItemModel *model = ui->studentTable->model();
+            QAbstractItemModel *model = tableView->model();
             QModelIndex checkboxIndex = model->index(row, checkboxColumn);
 
-            // Toggle checkbox state
+            // ✅ Toggle checkbox state
             Qt::CheckState currentState = static_cast<Qt::CheckState>(model->data(checkboxIndex, Qt::CheckStateRole).toInt());
             Qt::CheckState newState = (currentState == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
 
             model->setData(checkboxIndex, newState, Qt::CheckStateRole);
 
-            return true; // Event handled
+            return true; // ✅ Event handled
         }
     }
 
@@ -627,7 +630,7 @@ void MainWindow::on_viewDateSubmit_clicked()
     int year = ui->viewYear2->currentText().toInt();         // Selected year
     QString branch = ui->viewBranch2->currentText();         // Selected branch
 
-    // Step 2: Prepare SQL Query to fetch attendance records for given date, year, and branch
+    // ✅ Step 1: Prepare SQL Query
     QSqlQuery query;
     query.prepare(R"(
         SELECT s.roll, s.name, ar.status
@@ -642,33 +645,57 @@ void MainWindow::on_viewDateSubmit_clicked()
     query.addBindValue(year);
     query.addBindValue(branch);
 
-    // Step 3: Execute Query
+    // ✅ Step 2: Execute Query
     if (!query.exec()) {
         qDebug() << "Error fetching attendance records:" << query.lastError();
         return;
     }
 
-    // Step 4: Prepare Table Model
+    // ✅ Step 3: Create Table Model
     QStandardItemModel *model = new QStandardItemModel(this);
     model->setColumnCount(3);
     model->setHeaderData(0, Qt::Horizontal, "Roll No");
     model->setHeaderData(1, Qt::Horizontal, "Name");
-    model->setHeaderData(2, Qt::Horizontal, "Status");
+    model->setHeaderData(2, Qt::Horizontal, "Present");  // Renamed column to "Present"
 
-    // Step 5: Populate Data into Table
+    // ✅ Step 4: Populate Table with Checkboxes
     int row = 0;
     while (query.next()) {
         model->insertRow(row);
-        model->setItem(row, 0, new QStandardItem(query.value(0).toString())); // Roll No
-        model->setItem(row, 1, new QStandardItem(query.value(1).toString())); // Name
-        model->setItem(row, 2, new QStandardItem(query.value(2).toString())); // Attendance Status
+
+        // Roll No
+        QStandardItem *rollItem = new QStandardItem(query.value(0).toString());
+        rollItem->setFlags(rollItem->flags() & ~Qt::ItemIsEditable); // ❌ Make non-editable
+
+        // Name
+        QStandardItem *nameItem = new QStandardItem(query.value(1).toString());
+        nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable); // ❌ Make non-editable
+
+        // Checkbox for Attendance Status
+        QStandardItem *statusItem = new QStandardItem();
+        statusItem->setCheckable(true);
+
+        // ✅ Set checkbox state (Present = ✅ Checked, Absent = ❌ Unchecked)
+        if (query.value(2).toString().toLower() == "present") {
+            statusItem->setCheckState(Qt::Checked);
+        } else {
+            statusItem->setCheckState(Qt::Unchecked);
+        }
+
+        // ✅ Add items to model
+        model->setItem(row, 0, rollItem);
+        model->setItem(row, 1, nameItem);
+        model->setItem(row, 2, statusItem);
+
         row++;
     }
 
-    // Step 6: Set the Model to the TableView
+    // ✅ Step 5: Set the Model to the TableView
     ui->viewDateTable->setModel(model);
     ui->viewDateTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->viewDateTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // ❌ Disable text editing
 }
+
 
 
 void MainWindow::on_viewSearch3_clicked()
