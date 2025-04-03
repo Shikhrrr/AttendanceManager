@@ -76,6 +76,8 @@ private slots:
 
     void on_viewSearch4_clicked();
 
+    void on_studentTable_clicked(const QModelIndex &index);
+
     void on_pushButton_2_clicked();
 
     void on_submitDelete_clicked();

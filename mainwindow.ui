@@ -1296,7 +1296,7 @@ color: black;
           </rect>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="deleteStudentTab">
           <attribute name="title">
@@ -1346,6 +1346,16 @@ color: black;
           <attribute name="title">
            <string>Delete Date</string>
           </attribute>
+          <widget class="QDateEdit" name="dateEdit_2">
+           <property name="geometry">
+            <rect>
+             <x>140</x>
+             <y>40</y>
+             <width>110</width>
+             <height>29</height>
+            </rect>
+           </property>
+          </widget>
          </widget>
          <widget class="QWidget" name="tab_7">
           <attribute name="title">
