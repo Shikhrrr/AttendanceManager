@@ -74,7 +74,7 @@ border-radius: 10px;</string>
            <x>20</x>
            <y>140</y>
            <width>141</width>
-           <height>311</height>
+           <height>401</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
@@ -103,6 +103,13 @@ border-radius: 10px;</string>
            <widget class="QPushButton" name="gotoProfile">
             <property name="text">
              <string>View Profile</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="gotoDeleteRecords">
+            <property name="text">
+             <string>Delete Records</string>
             </property>
            </widget>
           </item>
@@ -228,18 +235,25 @@ border-radius: 10px;</string>
            <x>20</x>
            <y>120</y>
            <width>741</width>
-           <height>451</height>
+           <height>441</height>
           </rect>
          </property>
         </widget>
         <widget class="QPushButton" name="takeSubmit">
          <property name="geometry">
           <rect>
-           <x>660</x>
-           <y>580</y>
-           <width>83</width>
-           <height>29</height>
+           <x>640</x>
+           <y>570</y>
+           <width>111</width>
+           <height>41</height>
           </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(0, 170, 255);
+padding: 10px;
+border-radius: 20px;
+color: black;
+</string>
          </property>
          <property name="text">
           <string>Submit</string>
@@ -1269,6 +1283,91 @@ border-radius: 10px;</string>
            </property>
           </widget>
          </widget>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="page_2">
+        <widget class="QTabWidget" name="tabWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>80</y>
+           <width>751</width>
+           <height>531</height>
+          </rect>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="deleteStudentTab">
+          <attribute name="title">
+           <string>Delete Student</string>
+          </attribute>
+          <widget class="QLineEdit" name="deleteRollInput">
+           <property name="geometry">
+            <rect>
+             <x>260</x>
+             <y>110</y>
+             <width>221</width>
+             <height>28</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_25">
+           <property name="geometry">
+            <rect>
+             <x>260</x>
+             <y>60</y>
+             <width>211</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">font: 15pt &quot;Segoe UI&quot;;</string>
+           </property>
+           <property name="text">
+            <string>Enter Roll Number</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="submitDelete">
+           <property name="geometry">
+            <rect>
+             <x>260</x>
+             <y>150</y>
+             <width>221</width>
+             <height>29</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Delete Roll</string>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab_6">
+          <attribute name="title">
+           <string>Delete Date</string>
+          </attribute>
+         </widget>
+         <widget class="QWidget" name="tab_7">
+          <attribute name="title">
+           <string>Delete Batch</string>
+          </attribute>
+         </widget>
+        </widget>
+        <widget class="QLabel" name="label_24">
+         <property name="geometry">
+          <rect>
+           <x>240</x>
+           <y>20</y>
+           <width>271</width>
+           <height>61</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">font: 24pt &quot;Segoe UI&quot;;</string>
+         </property>
+         <property name="text">
+          <string>Delete Records</string>
+         </property>
         </widget>
        </widget>
       </widget>

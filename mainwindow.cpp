@@ -113,6 +113,15 @@ void MainWindow::on_gotoTakeAttendance_clicked()
     ui->stackedWidget->setCurrentIndex(0);
 }
 
+void MainWindow::on_gotoDeleteRecords_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(4);
+}
+
+void MainWindow::on_gotoAddClass_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(3);
+}
 
 void MainWindow::on_collapseSideBar_clicked()
 {
@@ -373,10 +382,6 @@ void MainWindow::on_takeMarkAll_clicked()
     }
 }
 
-void MainWindow::on_gotoAddClass_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(3);
-}
 void MainWindow::on_addSubmit_clicked()
 {
     // ✅ Fetch the values from the input fields
@@ -917,3 +922,53 @@ void MainWindow::on_viewSearch4_clicked() {
     ui->viewQueryTable->resizeColumnsToContents();
 }
 
+
+void MainWindow::on_submitDelete_clicked()
+{
+    QString roll = ui->deleteRollInput->text().trimmed(); // Get roll number from input field
+
+    if (roll.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Please enter a roll number.");
+        return;
+    }
+
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+
+    // Confirm before deletion
+    QMessageBox::StandardButton confirm;
+    confirm = QMessageBox::question(this, "Confirm Deletion",
+                                    "Are you sure you want to delete this student and all related records?",
+                                    QMessageBox::Yes | QMessageBox::No);
+
+    if (confirm == QMessageBox::No) {
+        return; // Do nothing if user cancels
+    }
+
+    // Start transaction
+    db.transaction();
+
+    // Step 1: Delete from attendance_records
+    query.prepare("DELETE FROM attendance_records WHERE roll = ?");
+    query.addBindValue(roll);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to delete attendance records: " + query.lastError().text());
+        db.rollback();
+        return;
+    }
+
+    // Step 2: Delete from student table
+    query.prepare("DELETE FROM student WHERE roll = ?");
+    query.addBindValue(roll);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to delete student record: " + query.lastError().text());
+        db.rollback();
+        return;
+    }
+
+    // Commit transaction
+    db.commit();
+    QMessageBox::information(this, "Success", "Student deleted successfully.");
+}
