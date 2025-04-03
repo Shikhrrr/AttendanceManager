@@ -11,12 +11,18 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QSqlQueryModel>
+#include <QKeyEvent>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    connect(ui->studentTable, &QTableView::clicked, this, &MainWindow::on_studentTable_clicked);
+
+    ui->studentTable->installEventFilter(this);
 
     // ✅ Set first-open page
     ui->stackedWidget->setCurrentIndex(1);
@@ -289,6 +295,53 @@ void MainWindow::on_takeFetch_clicked()
     ui->studentTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->studentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->studentTable && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);  // Safe cast
+
+        if (keyEvent && (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)) {
+            QModelIndex currentIndex = ui->studentTable->currentIndex();
+            if (!currentIndex.isValid()) {
+                return false;
+            }
+
+            int row = currentIndex.row();
+            int checkboxColumn = 2; // "Present" column
+
+            QAbstractItemModel *model = ui->studentTable->model();
+            QModelIndex checkboxIndex = model->index(row, checkboxColumn);
+
+            // Toggle checkbox state
+            Qt::CheckState currentState = static_cast<Qt::CheckState>(model->data(checkboxIndex, Qt::CheckStateRole).toInt());
+            Qt::CheckState newState = (currentState == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
+
+            model->setData(checkboxIndex, newState, Qt::CheckStateRole);
+
+            return true; // Event handled
+        }
+    }
+
+    return QMainWindow::eventFilter(obj, event);
+}
+
+void MainWindow::on_studentTable_clicked(const QModelIndex &index)
+{
+    if (!index.isValid()) return;
+
+    int row = index.row();
+    int checkboxColumn = 2; // "Present" column
+
+    QAbstractItemModel *model = ui->studentTable->model();
+    QModelIndex checkboxIndex = model->index(row, checkboxColumn);
+
+    // Toggle checkbox state
+    Qt::CheckState currentState = static_cast<Qt::CheckState>(model->data(checkboxIndex, Qt::CheckStateRole).toInt());
+    Qt::CheckState newState = (currentState == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
+
+    model->setData(checkboxIndex, newState, Qt::CheckStateRole);
 }
 
 void MainWindow::on_takeMarkAll_clicked()
@@ -836,3 +889,4 @@ void MainWindow::on_viewSearch4_clicked() {
 
     ui->viewQueryTable->resizeColumnsToContents();
 }
+

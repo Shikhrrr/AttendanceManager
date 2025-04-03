@@ -18,6 +18,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
 
@@ -75,7 +76,9 @@ private slots:
 
     void on_viewSearch4_clicked();
 
-    private:
+    void on_studentTable_clicked(const QModelIndex &index);
+
+private:
     Ui::MainWindow *ui;
     int collapsedWidth;
     int fullWidth;
