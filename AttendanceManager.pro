@@ -16,12 +16,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 # Source and header files
 SOURCES += \
     checkprofile.cpp \
+    deleteattendance.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     checkprofile.h \
+    deleteattendance.h \
     login.h \
     mainwindow.h
 

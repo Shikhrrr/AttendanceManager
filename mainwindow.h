@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "qsqldatabase.h"
 #include "ui_mainwindow.h"
 #include <QMainWindow>
 #include <QStandardItemModel>
@@ -84,6 +85,8 @@ private slots:
 
     void on_gotoDeleteRecords_clicked();
 
+    void on_dateDelete_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;
@@ -93,5 +96,6 @@ private:
     void connectToDatabase();
     QStandardItemModel *importModel;  // To display Excel data
     QString excelFilePath;
+    QSqlDatabase db;
 };
 #endif // MAINWINDOW_H
