@@ -992,3 +992,114 @@ void MainWindow::on_editSubmit_clicked()
     ui->viewDateTable->setModel(nullptr);
 }
 
+
+void MainWindow::on_downloadCSV_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Save CSV", "attendance_report.csv", "CSV Files (*.csv)");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error", "Could not open file for writing.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out << "Roll Number,Name,Total Classes Attended,Total Classes Held,Attendance Percentage\n";
+
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT s.roll, s.name,
+               COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) AS attended,
+               COUNT(ad.date_id) AS total_classes,
+               (COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) * 100.0 / COUNT(ad.date_id)) AS percentage
+        FROM student s
+        LEFT JOIN attendance_records ar ON s.roll = ar.roll
+        LEFT JOIN attendance_dates ad ON ar.date_id = ad.date_id
+        WHERE s.year = ? AND s.branch = ?
+        GROUP BY s.roll, s.name
+        ORDER BY s.roll;
+    )");
+
+    query.addBindValue(ui->viewYear3->currentText().toInt());
+    query.addBindValue(ui->viewBranch3->currentText());
+
+    if (!query.exec()) {
+        QMessageBox::warning(this, "Error", "Failed to fetch attendance data.");
+        file.close();
+        return;
+    }
+
+    while (query.next()) {
+        out << query.value(0).toString() << ","
+            << query.value(1).toString() << ","
+            << query.value(2).toInt() << ","
+            << query.value(3).toInt() << ","
+            << query.value(4).toDouble() << "%\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Success", "Attendance report exported successfully!");
+}
+
+
+void MainWindow::on_downloadCSV2_clicked()
+{
+    QString date = ui->viewDateInput->date().toString("yyyy-MM-dd");
+    int year = ui->viewYear2->currentText().toInt();
+    QString branch = ui->viewBranch2->currentText().trimmed();
+
+    // File name format: Attendance_YYYY-MM-DD.csv
+    QString fileName = QFileDialog::getSaveFileName(this, "Save Attendance Report",
+                                                    QString("Attendance_%1.csv").arg(date),
+                                                    "CSV files (*.csv)");
+    if (fileName.isEmpty()) {
+        return; // User canceled file dialog
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error", "Could not open file for writing.");
+        return;
+    }
+
+    QTextStream out(&file);
+
+    // Write the date at the top of the file
+    out << "Attendance Report for " << date << "\n\n";
+
+    // Write column headers
+    out << "Roll Number,Name,Status\n";
+
+    // Fetch data from database
+    QSqlQuery query;
+    query.prepare(R"(
+        SELECT s.roll, s.name, ar.status
+        FROM student s
+        JOIN attendance_records ar ON s.roll = ar.roll
+        JOIN attendance_dates ad ON ar.date_id = ad.date_id
+        WHERE ad.date = ? AND s.year = ? AND s.branch = ?
+        ORDER BY s.roll
+    )");
+    query.addBindValue(date);
+    query.addBindValue(year);
+    query.addBindValue(branch);
+
+    if (!query.exec()) {
+        QMessageBox::warning(this, "Error", "Failed to fetch attendance data: " + query.lastError().text());
+        file.close();
+        return;
+    }
+
+    // Write data rows
+    while (query.next()) {
+        QString roll = query.value(0).toString();
+        QString name = query.value(1).toString();
+        QString status = query.value(2).toString();
+        out << roll << "," << name << "," << status << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Success", "Attendance report saved successfully.");
+}
+

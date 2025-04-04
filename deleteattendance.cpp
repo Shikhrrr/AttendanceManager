@@ -115,4 +115,3 @@ void DeleteAttendance::deleteRecordsByDate() {
 
     QMessageBox::information(nullptr, "Success", "Attendance for " + date + " has been deleted.");
 }
-

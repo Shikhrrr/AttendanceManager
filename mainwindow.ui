@@ -591,7 +591,7 @@ color: black;
               <property name="geometry">
                <rect>
                 <x>10</x>
-                <y>120</y>
+                <y>80</y>
                 <width>741</width>
                 <height>351</height>
                </rect>
@@ -608,6 +608,19 @@ color: black;
               </property>
               <property name="text">
                <string>View</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="downloadCSV">
+              <property name="geometry">
+               <rect>
+                <x>592</x>
+                <y>440</y>
+                <width>111</width>
+                <height>29</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Download CSV</string>
               </property>
              </widget>
             </widget>
@@ -783,6 +796,19 @@ color: black;
               </property>
               <property name="text">
                <string>Edit</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="downloadCSV2">
+              <property name="geometry">
+               <rect>
+                <x>492</x>
+                <y>440</y>
+                <width>111</width>
+                <height>29</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Download CSV</string>
               </property>
              </widget>
             </widget>
@@ -1370,12 +1396,12 @@ color: black;
            </property>
            <property name="dateTime">
             <datetime>
-             <hour>2</hour>
+             <hour>15</hour>
              <minute>0</minute>
              <second>0</second>
              <year>2024</year>
              <month>12</month>
-             <day>31</day>
+             <day>30</day>
             </datetime>
            </property>
           </widget>

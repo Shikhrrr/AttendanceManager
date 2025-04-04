@@ -91,6 +91,10 @@ private slots:
 
     void on_editSubmit_clicked();
 
+    void on_downloadCSV_clicked();
+
+    void on_downloadCSV2_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;
