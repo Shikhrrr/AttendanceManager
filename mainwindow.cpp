@@ -972,3 +972,63 @@ void MainWindow::on_submitDelete_clicked()
     db.commit();
     QMessageBox::information(this, "Success", "Student deleted successfully.");
 }
+
+void MainWindow::on_dateDelete_clicked()
+{
+    QString date = ui->deleteDateInput->date().toString("yyyy-MM-dd");
+
+    if (date.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Please select a date.");
+        return;
+    }
+
+    QSqlDatabase db = QSqlDatabase::database();
+    QSqlQuery query(db);
+
+    // Step 1: Get the date_id from attendance_dates
+    query.prepare("SELECT date_id FROM attendance_dates WHERE date = ?");
+    query.addBindValue(date);
+
+    if (!query.exec() || !query.next()) {
+        QMessageBox::warning(this, "Error", "No attendance records found for this date.");
+        return;
+    }
+
+    int dateId = query.value(0).toInt();
+
+    // Step 2: Confirm deletion
+    QMessageBox::StandardButton confirm = QMessageBox::question(
+        this, "Confirm Deletion",
+        "Are you sure you want to delete all attendance records for " + date + "?",
+        QMessageBox::Yes | QMessageBox::No
+        );
+
+    if (confirm != QMessageBox::Yes)
+        return;
+
+    db.transaction();
+
+    // Step 3: Delete from attendance_records
+    QSqlQuery delQuery(db);
+    delQuery.prepare("DELETE FROM attendance_records WHERE date_id = ?");
+    delQuery.addBindValue(dateId);
+    if (!delQuery.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to delete attendance records: " + delQuery.lastError().text());
+        db.rollback();
+        return;
+    }
+
+    // Step 4: Delete from attendance_dates
+    delQuery.prepare("DELETE FROM attendance_dates WHERE date_id = ?");
+    delQuery.addBindValue(dateId);
+    if (!delQuery.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to delete attendance date: " + delQuery.lastError().text());
+        db.rollback();
+        return;
+    }
+
+    db.commit();
+
+    QMessageBox::information(this, "Success", "Attendance for " + date + " has been deleted.");
+}
+

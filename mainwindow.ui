@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1424</width>
-    <height>1063</height>
+    <width>1000</width>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -127,7 +127,7 @@ border-radius: 10px;</string>
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="p0">
         <widget class="QLabel" name="label_7">
@@ -1346,14 +1346,37 @@ color: black;
           <attribute name="title">
            <string>Delete Date</string>
           </attribute>
-          <widget class="QDateEdit" name="dateEdit_2">
+          <widget class="QDateEdit" name="deleteDateInput">
            <property name="geometry">
             <rect>
-             <x>140</x>
-             <y>40</y>
-             <width>110</width>
+             <x>280</x>
+             <y>50</y>
+             <width>141</width>
              <height>29</height>
             </rect>
+           </property>
+           <property name="dateTime">
+            <datetime>
+             <hour>18</hour>
+             <minute>30</minute>
+             <second>0</second>
+             <year>2024</year>
+             <month>12</month>
+             <day>31</day>
+            </datetime>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="dateDelete">
+           <property name="geometry">
+            <rect>
+             <x>290</x>
+             <y>100</y>
+             <width>121</width>
+             <height>29</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Delete Date</string>
            </property>
           </widget>
          </widget>
