@@ -87,6 +87,10 @@ private slots:
 
     void on_dateDelete_clicked();
 
+
+
+    void on_editSubmit_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;

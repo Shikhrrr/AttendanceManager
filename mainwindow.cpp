@@ -632,7 +632,7 @@ void MainWindow::on_takeSubmit_clicked()
 
 void MainWindow::on_viewDateSubmit_clicked()
 {
-    QString date = ui->dateEdit->date().toString("yyyy-MM-dd");  // Selected date
+    QString date = ui->viewDateInput->date().toString("yyyy-MM-dd");  // Selected date
     int year = ui->viewYear2->currentText().toInt();         // Selected year
     QString branch = ui->viewBranch2->currentText();         // Selected branch
 
@@ -934,5 +934,61 @@ void MainWindow::on_dateDelete_clicked()
 {
     DeleteAttendance del(ui, db);
     del.deleteRecordsByDate();
+}
+
+void MainWindow::on_editSubmit_clicked()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Are you sure?", "Are you sure you want to edit the attendance for " +
+                                ui->viewDateInput->date().toString("yyyy-MM-dd")+"?",
+                                QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::No) return;
+
+    QString dateStr = ui->viewDateInput->date().toString("yyyy-MM-dd");
+
+    QSqlQuery dateQuery;
+    dateQuery.prepare("SELECT date_id FROM attendance_dates WHERE date = ?");
+    dateQuery.addBindValue(dateStr);
+
+    if (!dateQuery.exec() || !dateQuery.next()) {
+        QMessageBox::warning(this, "Error", "Date not found in the database.");
+        return;
+    }
+
+    int dateId = dateQuery.value(0).toInt();
+
+    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->viewDateTable->model());
+    if (!model) {
+        QMessageBox::warning(this, "Error", "Model not found or invalid.");
+        return;
+    }
+
+    QSqlQuery updateQuery;
+
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QString roll = model->item(row, 0)->text();
+        Qt::CheckState state = model->item(row, 2)->checkState();
+        QString status = (state == Qt::Checked) ? "Present" : "Absent";
+
+        updateQuery.prepare(R"(
+            UPDATE attendance_records
+            SET status = ?
+            WHERE roll = ? AND date_id = ?
+        )");
+
+        updateQuery.addBindValue(status);
+        updateQuery.addBindValue(roll);
+        updateQuery.addBindValue(dateId);
+
+        if (!updateQuery.exec()) {
+            qDebug() << "Failed to update attendance for" << roll << ":" << updateQuery.lastError().text();
+        }
+    }
+
+    QMessageBox::information(this, "Success", "Attendance updated successfully.");
+
+    delete model;
+    ui->viewDateTable->setModel(nullptr);
 }
 

@@ -56,6 +56,8 @@ void DeleteAttendance::deleteStudentByRoll() {
     QMessageBox::information(nullptr, "Success", "Student deleted successfully.");
 }
 
+//---------------------------------------------
+
 void DeleteAttendance::deleteRecordsByDate() {
     QString date = ui->deleteDateInput->date().toString("yyyy-MM-dd");
 
@@ -113,3 +115,4 @@ void DeleteAttendance::deleteRecordsByDate() {
 
     QMessageBox::information(nullptr, "Success", "Attendance for " + date + " has been deleted.");
 }
+

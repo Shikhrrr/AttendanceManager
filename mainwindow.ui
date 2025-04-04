@@ -127,7 +127,7 @@ border-radius: 10px;</string>
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>4</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="p0">
         <widget class="QLabel" name="label_7">
@@ -467,7 +467,7 @@ color: black;
              <string notr="true">font: 24pt &quot;Segoe UI&quot;;</string>
             </property>
             <property name="text">
-             <string>View Attendance</string>
+             <string>View and Edit Attendance</string>
             </property>
            </widget>
           </item>
@@ -732,7 +732,7 @@ color: black;
                </rect>
               </property>
              </widget>
-             <widget class="QDateEdit" name="dateEdit">
+             <widget class="QDateEdit" name="viewDateInput">
               <property name="geometry">
                <rect>
                 <x>50</x>
@@ -755,7 +755,7 @@ color: black;
                 <x>15</x>
                 <y>121</y>
                 <width>731</width>
-                <height>351</height>
+                <height>301</height>
                </rect>
               </property>
              </widget>
@@ -770,6 +770,19 @@ color: black;
               </property>
               <property name="text">
                <string>View</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="editSubmit">
+              <property name="geometry">
+               <rect>
+                <x>640</x>
+                <y>440</y>
+                <width>83</width>
+                <height>29</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Edit</string>
               </property>
              </widget>
             </widget>
@@ -1357,8 +1370,8 @@ color: black;
            </property>
            <property name="dateTime">
             <datetime>
-             <hour>18</hour>
-             <minute>30</minute>
+             <hour>2</hour>
+             <minute>0</minute>
              <second>0</second>
              <year>2024</year>
              <month>12</month>
