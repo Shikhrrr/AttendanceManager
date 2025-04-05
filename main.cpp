@@ -17,6 +17,17 @@ int main(int argc, char *argv[])
             break;
         }
     }
+    // QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
+    QFile file("../style.qss");
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        qDebug() << "Failed to open style.qss";
+    } else {
+        QTextStream stream(&file);
+        QString styleSheet = stream.readAll();
+        qDebug() << "Stylesheet loaded successfully";
+        a.setStyleSheet(styleSheet);
+    }
+
     Login l;
     l.show();
     return a.exec();

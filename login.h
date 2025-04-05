@@ -14,8 +14,6 @@ class Login : public QWidget
 
 public:
     explicit Login(QWidget *parent = nullptr);
-    QString username = "Mukesh";
-    QString password = "123";
     ~Login();
 
 private slots:

@@ -15,20 +15,20 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 # Source and header files
 SOURCES += \
-    checkprofile.cpp \
+    # checkprofile.cpp \
     deleteattendance.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
-    checkprofile.h \
+    # checkprofile.h \
     deleteattendance.h \
     login.h \
     mainwindow.h
 
 FORMS += \
-    checkprofile.ui \
+    # checkprofile.ui \
     login.ui \
     mainwindow.ui
 
@@ -44,3 +44,5 @@ OBJECTS_DIR = $$PWD/build/debug
 MOC_DIR = $$PWD/build/moc
 RCC_DIR = $$PWD/build/rcc
 UI_DIR = $$PWD/build/ui
+
+DISTFILES +=

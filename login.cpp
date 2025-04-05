@@ -65,8 +65,8 @@ void Login::checkAutoLogin() {
 void Login::on_login_clicked()
 {
     // Get username and password from input fields
-    username = ui->username->text().trimmed();
-    password = ui->password->text().trimmed();
+    QString username = ui->username->text().trimmed();
+    QString password = ui->password->text().trimmed();
 
     // ✅ Verify database connection
     if (!QSqlDatabase::database().isOpen()) {
