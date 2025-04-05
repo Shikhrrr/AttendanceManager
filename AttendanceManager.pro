@@ -45,4 +45,5 @@ MOC_DIR = $$PWD/build/moc
 RCC_DIR = $$PWD/build/rcc
 UI_DIR = $$PWD/build/ui
 
-DISTFILES +=
+DISTFILES += \
+    style.qss
