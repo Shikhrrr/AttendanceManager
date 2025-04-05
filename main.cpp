@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
         }
     }
     // QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
-    QFile file("../style.qss");
+    QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         qDebug() << "Failed to open style.qss";
     } else {

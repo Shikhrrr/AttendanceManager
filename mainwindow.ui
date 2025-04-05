@@ -790,12 +790,12 @@ color: black;
                <rect>
                 <x>640</x>
                 <y>440</y>
-                <width>83</width>
+                <width>101</width>
                 <height>29</height>
                </rect>
               </property>
               <property name="text">
-               <string>Edit</string>
+               <string>Save Changes</string>
               </property>
              </widget>
              <widget class="QPushButton" name="downloadCSV2">
@@ -1396,8 +1396,8 @@ color: black;
            </property>
            <property name="dateTime">
             <datetime>
-             <hour>15</hour>
-             <minute>0</minute>
+             <hour>9</hour>
+             <minute>30</minute>
              <second>0</second>
              <year>2024</year>
              <month>12</month>

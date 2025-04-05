@@ -68,6 +68,9 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->stackedWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     // ui->viewPageTab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     // ui->importCSV->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    ui->downloadCSV->setVisible(false);
+    ui->downloadCSV2->setVisible(false);
 }
 
 //checking if this works
@@ -657,6 +660,8 @@ void MainWindow::on_viewDateSubmit_clicked()
         return;
     }
 
+    ui->downloadCSV2->setVisible(true);
+
     // ✅ Step 3: Create Table Model
     QStandardItemModel *model = new QStandardItemModel(this);
     model->setColumnCount(3);
@@ -700,6 +705,8 @@ void MainWindow::on_viewDateSubmit_clicked()
     ui->viewDateTable->setModel(model);
     ui->viewDateTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->viewDateTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // ❌ Disable text editing
+
+    ui->downloadCSV->setVisible(true);
 }
 
 
@@ -1040,6 +1047,7 @@ void MainWindow::on_downloadCSV_clicked()
 
     file.close();
     QMessageBox::information(this, "Success", "Attendance report exported successfully!");
+    ui->downloadCSV->setVisible(false);
 }
 
 
@@ -1100,6 +1108,7 @@ void MainWindow::on_downloadCSV2_clicked()
     }
 
     file.close();
+    ui->downloadCSV2->setVisible(false);
     QMessageBox::information(this, "Success", "Attendance report saved successfully.");
 }
 
