@@ -99,6 +99,7 @@ private:
     Ui::MainWindow *ui;
     int collapsedWidth;
     int fullWidth;
+    int collapsedHeight;
     QString username;
     QString password;
     void connectToDatabase();
