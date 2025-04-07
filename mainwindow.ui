@@ -17,6 +17,9 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QSplitter" name="splitter">
+      <property name="styleSheet">
+       <string notr="true">background-color: white</string>
+      </property>
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
       </property>
@@ -34,9 +37,10 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(45, 45, 45);
+        <string notr="true">background-color: gray;
 color: white;
-border-radius: 10px;</string>
+border-radius: 10px;
+font-weight: bold</string>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -1396,8 +1400,8 @@ color: black;
            </property>
            <property name="dateTime">
             <datetime>
-             <hour>9</hour>
-             <minute>30</minute>
+             <hour>4</hour>
+             <minute>0</minute>
              <second>0</second>
              <year>2024</year>
              <month>12</month>
