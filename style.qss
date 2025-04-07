@@ -7,7 +7,7 @@ QWidget#sideBar QPushButton {
 }
 
 QWidget#sideBar QPushButton:hover {
-    background-color: #500;
+    background-color: #666;
     border-radius: 10px;
 }
 
