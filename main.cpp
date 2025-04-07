@@ -17,6 +17,8 @@ int main(int argc, char *argv[])
             break;
         }
     }
+    Login l;
+    l.show();
     // QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
     QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -26,9 +28,7 @@ int main(int argc, char *argv[])
         QString styleSheet = stream.readAll();
         qDebug() << "Stylesheet loaded successfully";
         a.setStyleSheet(styleSheet);
+        l.setStyleSheet(styleSheet);
     }
-
-    Login l;
-    l.show();
     return a.exec();
 }

@@ -40,25 +40,12 @@
         <number>0</number>
        </property>
        <widget class="QWidget" name="page_3">
-        <widget class="QLabel" name="label_5">
-         <property name="geometry">
-          <rect>
-           <x>40</x>
-           <y>50</y>
-           <width>91</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>side bar</string>
-         </property>
-        </widget>
         <widget class="QPushButton" name="collapseSideBar">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>30</y>
-           <width>31</width>
+           <width>51</width>
            <height>31</height>
           </rect>
          </property>
@@ -70,7 +57,7 @@
          <property name="geometry">
           <rect>
            <x>20</x>
-           <y>140</y>
+           <y>110</y>
            <width>141</width>
            <height>401</height>
           </rect>
@@ -124,7 +111,7 @@
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="p0">
         <widget class="QLabel" name="label_7">
@@ -193,26 +180,6 @@
           </property>
          </item>
         </widget>
-        <widget class="QComboBox" name="takeGroup">
-         <property name="geometry">
-          <rect>
-           <x>240</x>
-           <y>80</y>
-           <width>82</width>
-           <height>28</height>
-          </rect>
-         </property>
-         <item>
-          <property name="text">
-           <string>A</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>B</string>
-          </property>
-         </item>
-        </widget>
         <widget class="QPushButton" name="takeFetch">
          <property name="geometry">
           <rect>
@@ -239,18 +206,14 @@
         <widget class="QPushButton" name="takeSubmit">
          <property name="geometry">
           <rect>
-           <x>640</x>
+           <x>650</x>
            <y>570</y>
-           <width>111</width>
-           <height>41</height>
+           <width>101</width>
+           <height>31</height>
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(0, 170, 255);
-padding: 10px;
-border-radius: 20px;
-color: black;
-</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>Submit</string>
@@ -274,8 +237,8 @@ color: black;
         <widget class="QGroupBox" name="groupBox">
          <property name="geometry">
           <rect>
-           <x>160</x>
-           <y>40</y>
+           <x>260</x>
+           <y>42</y>
            <width>251</width>
            <height>221</height>
           </rect>
@@ -334,8 +297,8 @@ color: black;
         <widget class="QGroupBox" name="newDetailsGroup">
          <property name="geometry">
           <rect>
-           <x>100</x>
-           <y>318</y>
+           <x>200</x>
+           <y>320</y>
            <width>391</width>
            <height>165</height>
           </rect>
@@ -393,8 +356,8 @@ color: black;
         <widget class="QGroupBox" name="confirmDetailsGroup">
          <property name="geometry">
           <rect>
-           <x>180</x>
-           <y>260</y>
+           <x>280</x>
+           <y>262</y>
            <width>226</width>
            <height>161</height>
           </rect>
@@ -471,7 +434,7 @@ color: black;
           <item row="1" column="0">
            <widget class="QTabWidget" name="viewPageTab">
             <property name="currentIndex">
-             <number>3</number>
+             <number>1</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -480,21 +443,11 @@ color: black;
              <attribute name="title">
               <string>View Statistics</string>
              </attribute>
-             <widget class="QComboBox" name="viewGroup3">
-              <property name="geometry">
-               <rect>
-                <x>440</x>
-                <y>50</y>
-                <width>82</width>
-                <height>28</height>
-               </rect>
-              </property>
-             </widget>
              <widget class="QLabel" name="label_15">
               <property name="geometry">
                <rect>
-                <x>110</x>
-                <y>20</y>
+                <x>130</x>
+                <y>10</y>
                 <width>81</width>
                 <height>21</height>
                </rect>
@@ -506,8 +459,8 @@ color: black;
              <widget class="QComboBox" name="viewBranch3">
               <property name="geometry">
                <rect>
-                <x>290</x>
-                <y>50</y>
+                <x>350</x>
+                <y>40</y>
                 <width>82</width>
                 <height>28</height>
                </rect>
@@ -528,24 +481,11 @@ color: black;
                </property>
               </item>
              </widget>
-             <widget class="QLabel" name="label_16">
-              <property name="geometry">
-               <rect>
-                <x>440</x>
-                <y>20</y>
-                <width>81</width>
-                <height>21</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Select Group</string>
-              </property>
-             </widget>
              <widget class="QComboBox" name="viewYear3">
               <property name="geometry">
                <rect>
-                <x>100</x>
-                <y>50</y>
+                <x>120</x>
+                <y>40</y>
                 <width>82</width>
                 <height>28</height>
                </rect>
@@ -574,8 +514,8 @@ color: black;
              <widget class="QLabel" name="label_17">
               <property name="geometry">
                <rect>
-                <x>290</x>
-                <y>20</y>
+                <x>350</x>
+                <y>10</y>
                 <width>91</width>
                 <height>21</height>
                </rect>
@@ -628,7 +568,7 @@ color: black;
              <widget class="QLabel" name="label_6">
               <property name="geometry">
                <rect>
-                <x>60</x>
+                <x>130</x>
                 <y>10</y>
                 <width>81</width>
                 <height>21</height>
@@ -641,7 +581,7 @@ color: black;
              <widget class="QLabel" name="label_12">
               <property name="geometry">
                <rect>
-                <x>230</x>
+                <x>320</x>
                 <y>10</y>
                 <width>81</width>
                 <height>21</height>
@@ -654,7 +594,7 @@ color: black;
              <widget class="QLabel" name="label_13">
               <property name="geometry">
                <rect>
-                <x>410</x>
+                <x>510</x>
                 <y>10</y>
                 <width>91</width>
                 <height>21</height>
@@ -664,23 +604,10 @@ color: black;
                <string>Select Branch</string>
               </property>
              </widget>
-             <widget class="QLabel" name="label_14">
-              <property name="geometry">
-               <rect>
-                <x>590</x>
-                <y>10</y>
-                <width>81</width>
-                <height>21</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Select Group</string>
-              </property>
-             </widget>
              <widget class="QComboBox" name="viewYear2">
               <property name="geometry">
                <rect>
-                <x>220</x>
+                <x>320</x>
                 <y>40</y>
                 <width>82</width>
                 <height>28</height>
@@ -710,7 +637,7 @@ color: black;
              <widget class="QComboBox" name="viewBranch2">
               <property name="geometry">
                <rect>
-                <x>410</x>
+                <x>510</x>
                 <y>40</y>
                 <width>82</width>
                 <height>28</height>
@@ -732,20 +659,10 @@ color: black;
                </property>
               </item>
              </widget>
-             <widget class="QComboBox" name="viewGroup2">
-              <property name="geometry">
-               <rect>
-                <x>590</x>
-                <y>40</y>
-                <width>82</width>
-                <height>28</height>
-               </rect>
-              </property>
-             </widget>
              <widget class="QDateEdit" name="viewDateInput">
               <property name="geometry">
                <rect>
-                <x>50</x>
+                <x>120</x>
                 <y>40</y>
                 <width>110</width>
                 <height>29</height>
@@ -880,8 +797,8 @@ color: black;
              <widget class="QComboBox" name="viewBranch4">
               <property name="geometry">
                <rect>
-                <x>70</x>
-                <y>60</y>
+                <x>130</x>
+                <y>50</y>
                 <width>82</width>
                 <height>28</height>
                </rect>
@@ -905,8 +822,8 @@ color: black;
              <widget class="QLabel" name="label_28">
               <property name="geometry">
                <rect>
-                <x>70</x>
-                <y>30</y>
+                <x>130</x>
+                <y>20</y>
                 <width>63</width>
                 <height>20</height>
                </rect>
@@ -918,8 +835,8 @@ color: black;
              <widget class="QLabel" name="label_29">
               <property name="geometry">
                <rect>
-                <x>220</x>
-                <y>30</y>
+                <x>320</x>
+                <y>20</y>
                 <width>63</width>
                 <height>20</height>
                </rect>
@@ -928,24 +845,11 @@ color: black;
                <string>Year</string>
               </property>
              </widget>
-             <widget class="QLabel" name="label_30">
-              <property name="geometry">
-               <rect>
-                <x>350</x>
-                <y>30</y>
-                <width>63</width>
-                <height>20</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Group</string>
-              </property>
-             </widget>
              <widget class="QComboBox" name="viewYear4">
               <property name="geometry">
                <rect>
-                <x>220</x>
-                <y>60</y>
+                <x>320</x>
+                <y>50</y>
                 <width>82</width>
                 <height>28</height>
                </rect>
@@ -971,31 +875,11 @@ color: black;
                </property>
               </item>
              </widget>
-             <widget class="QComboBox" name="viewGroup4">
-              <property name="geometry">
-               <rect>
-                <x>350</x>
-                <y>60</y>
-                <width>82</width>
-                <height>28</height>
-               </rect>
-              </property>
-              <item>
-               <property name="text">
-                <string>A</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>B</string>
-               </property>
-              </item>
-             </widget>
              <widget class="QSpinBox" name="viewLessThan">
               <property name="geometry">
                <rect>
-                <x>500</x>
-                <y>60</y>
+                <x>490</x>
+                <y>50</y>
                 <width>44</width>
                 <height>29</height>
                </rect>
@@ -1010,8 +894,8 @@ color: black;
              <widget class="QSpinBox" name="viewMoreThan">
               <property name="geometry">
                <rect>
-                <x>610</x>
-                <y>60</y>
+                <x>600</x>
+                <y>50</y>
                 <width>44</width>
                 <height>29</height>
                </rect>
@@ -1026,8 +910,8 @@ color: black;
              <widget class="QLabel" name="label_31">
               <property name="geometry">
                <rect>
-                <x>480</x>
-                <y>30</y>
+                <x>470</x>
+                <y>20</y>
                 <width>81</width>
                 <height>20</height>
                </rect>
@@ -1039,8 +923,8 @@ color: black;
              <widget class="QLabel" name="label_32">
               <property name="geometry">
                <rect>
-                <x>590</x>
-                <y>30</y>
+                <x>580</x>
+                <y>20</y>
                 <width>81</width>
                 <height>20</height>
                </rect>
@@ -1062,7 +946,7 @@ color: black;
              <widget class="QPushButton" name="viewSearch4">
               <property name="geometry">
                <rect>
-                <x>300</x>
+                <x>320</x>
                 <y>100</y>
                 <width>83</width>
                 <height>29</height>
