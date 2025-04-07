@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     collapsedWidth = ui->collapseSideBar->width();
     fullWidth = ui->sideBar->maximumWidth();
+    collapsedHeight = ui->collapseSideBar->height();
 
     // ✅ Connect to the database
     connectToDatabase();
@@ -54,19 +55,6 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "Query failed: " << query.lastError().text();
         ui->currentName->setText("Error fetching username");
     }
-    // Apply dynamic stretching to keep proportions on window resize
-    // ui->viewAttendanceLayout->setRowStretch(0, 1);
-    // ui->viewAttendanceLayout->setRowStretch(1, 5);
-    // ui->viewAttendanceLayout->setRowStretch(2, 1);
-
-    // ui->viewAttendanceLayout->setColumnStretch(0, 1);
-    // ui->viewAttendanceLayout->setColumnStretch(1, 1);
-    // ui->viewAttendanceLayout->setColumnStretch(2, 1);
-
-    // Ensure the parent widget is using this layout
-    // ui->stackedWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    // ui->viewPageTab->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    // ui->importCSV->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     ui->downloadCSV->setVisible(false);
     ui->downloadCSV2->setVisible(false);
@@ -129,7 +117,8 @@ void MainWindow::on_gotoAddClass_clicked()
 void MainWindow::on_collapseSideBar_clicked()
 {
     if (ui->sideBar->width() == fullWidth) {
-        ui->sideBar->setFixedWidth(collapsedWidth);
+        // ui->sideBar->setFixedWidth(collapsedWidth);
+        ui->sideBar->setFixedWidth(collapsedHeight);
         ui->collapseSideBar->setText("->");
     } else {
         ui->sideBar->setFixedWidth(fullWidth);
@@ -855,43 +844,48 @@ void MainWindow::on_viewStatistics_clicked()
 void MainWindow::on_viewSearch4_clicked() {
     int year = ui->viewYear4->currentText().trimmed().toInt();
     QString branch = ui->viewBranch4->currentText().trimmed();
-    int minPercentage = ui->viewLessThan->value();
-    int maxPercentage = ui->viewMoreThan->value();
+    int minPercentage = ui->viewMoreThan->value();  // MIN should come from "more than"
+    int maxPercentage = ui->viewLessThan->value();  // MAX should come from "less than"
 
     qDebug() << "Searching for: Year=" << year
              << " Branch=" << branch
              << " Percentage between " << minPercentage << " and " << maxPercentage;
 
-    // Step 1: Get total number of classes held for given year and branch
-    QSqlQuery totalQuery;
-    totalQuery.prepare(R"(
-        SELECT COUNT(DISTINCT ad.date_id) AS total
-        FROM attendance_dates ad
-        JOIN attendance_records ar ON ad.date_id = ar.date_id
-        JOIN student s ON ar.roll = s.roll
-        WHERE s.year = ? AND s.branch = ?
-    )");
-    totalQuery.addBindValue(year);
-    totalQuery.addBindValue(branch);
+    // Step 1: Get all date_ids (classes held) for given year and branch
+    QSqlQuery dateQuery;
+    dateQuery.prepare(R"(
+    SELECT DISTINCT ad.date_id
+    FROM attendance_dates ad
+    JOIN attendance_records ar ON ad.date_id = ar.date_id
+    JOIN student s ON ar.roll = s.roll
+    WHERE s.year = ? AND s.branch = ?
+)");
+    dateQuery.addBindValue(year);
+    dateQuery.addBindValue(branch);
 
-    int totalClasses = 0;
-    if (totalQuery.exec() && totalQuery.next()) {
-        totalClasses = totalQuery.value("total").toInt();
+    QSet<int> uniqueDates;
+    if (dateQuery.exec()) {
+        while (dateQuery.next()) {
+            uniqueDates.insert(dateQuery.value(0).toInt());
+        }
     } else {
-        qDebug() << "Failed to get total classes:" << totalQuery.lastError().text();
+        qDebug() << "Error fetching total classes:" << dateQuery.lastError().text();
     }
 
-    // Step 2: Get all students of given year and branch, with present count
+    int totalClasses = uniqueDates.size();
+    qDebug() << "Total classes held:" << totalClasses;
+
+    // Step 2: Get attendance count for each student
     QSqlQuery query;
     query.prepare(R"(
-        SELECT s.roll, s.name,
-               COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) AS attended
-        FROM student s
-        LEFT JOIN attendance_records ar ON s.roll = ar.roll
-        WHERE s.year = ? AND s.branch = ?
-        GROUP BY s.roll, s.name
-        ORDER BY s.roll
-    )");
+    SELECT s.roll, s.name,
+           COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) AS attended
+    FROM student s
+    LEFT JOIN attendance_records ar ON s.roll = ar.roll
+    WHERE s.year = ? AND s.branch = ?
+    GROUP BY s.roll, s.name
+    ORDER BY s.roll
+)");
     query.addBindValue(year);
     query.addBindValue(branch);
 
@@ -900,11 +894,12 @@ void MainWindow::on_viewSearch4_clicked() {
         return;
     }
 
+    // Step 3: Display in QTableWidget
     ui->viewQueryTable->clear();
     ui->viewQueryTable->setRowCount(0);
     ui->viewQueryTable->setColumnCount(5);
     ui->viewQueryTable->setHorizontalHeaderLabels({"Roll No", "Name", "Attended", "Total", "Percentage"});
-    qDebug() << "Total Classes:" << totalClasses;
+
     int row = 0;
     while (query.next()) {
         int attended = query.value("attended").toInt();
@@ -917,7 +912,6 @@ void MainWindow::on_viewSearch4_clicked() {
             ui->viewQueryTable->setItem(row, 2, new QTableWidgetItem(QString::number(attended)));
             ui->viewQueryTable->setItem(row, 3, new QTableWidgetItem(QString::number(totalClasses)));
             ui->viewQueryTable->setItem(row, 4, new QTableWidgetItem(QString::number(percentage, 'f', 2)));
-            qDebug() << "Student:" << query.value("roll").toString() << "-> Percentage:" << percentage;
 
             row++;
         }
@@ -929,6 +923,7 @@ void MainWindow::on_viewSearch4_clicked() {
     if (row == 0) {
         qDebug() << "No records found for given filters.";
     }
+
 }
 
 void MainWindow::on_submitDelete_clicked()
