@@ -55,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "Query failed: " << query.lastError().text();
         ui->currentName->setText("Error fetching username");
     }
+    this->setPalette(QPalette());
+
 
     ui->downloadCSV->setVisible(false);
     ui->downloadCSV2->setVisible(false);

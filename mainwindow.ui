@@ -6,19 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>621</height>
+    <width>994</width>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QSplitter" name="splitter">
       <property name="styleSheet">
-       <string notr="true">background-color: white</string>
+       <string notr="true"/>
       </property>
       <property name="orientation">
        <enum>Qt::Orientation::Horizontal</enum>
@@ -38,10 +44,6 @@
        </property>
        <property name="styleSheet">
         <string notr="true"/>
-        <string notr="true">background-color: gray;
-color: white;
-border-radius: 10px;
-font-weight: bold</string>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -72,6 +74,12 @@ font-weight: bold</string>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QPushButton" name="gotoTakeAttendance">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <property name="text">
              <string>Take Attendance</string>
             </property>
@@ -117,6 +125,9 @@ font-weight: bold</string>
        </widget>
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -209,6 +220,9 @@ font-weight: bold</string>
            <height>441</height>
           </rect>
          </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
         </widget>
         <widget class="QPushButton" name="takeSubmit">
          <property name="geometry">
@@ -231,7 +245,7 @@ font-weight: bold</string>
           <rect>
            <x>640</x>
            <y>80</y>
-           <width>83</width>
+           <width>80</width>
            <height>29</height>
           </rect>
          </property>
@@ -239,6 +253,13 @@ font-weight: bold</string>
           <string>Mark All</string>
          </property>
         </widget>
+        <zorder>takeYear</zorder>
+        <zorder>takeBranch</zorder>
+        <zorder>takeFetch</zorder>
+        <zorder>studentTable</zorder>
+        <zorder>takeSubmit</zorder>
+        <zorder>takeMarkAll</zorder>
+        <zorder>label_7</zorder>
        </widget>
        <widget class="QWidget" name="p1">
         <widget class="QGroupBox" name="groupBox">
@@ -1284,14 +1305,12 @@ font-weight: bold</string>
            </property>
            <property name="dateTime">
             <datetime>
-             <hour>4</hour>
-             <minute>0</minute>
-             <hour>4</hour>
+             <hour>6</hour>
              <minute>0</minute>
              <second>0</second>
              <year>2024</year>
              <month>12</month>
-             <day>30</day>
+             <day>29</day>
             </datetime>
            </property>
           </widget>
