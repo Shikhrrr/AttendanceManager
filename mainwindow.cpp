@@ -524,6 +524,8 @@ void MainWindow::on_submitCSV_clicked()
         }
     }
 
+    //chonk
+
     if (allRowsInserted) {
         db.commit();  // Commit the transaction if all rows are inserted successfully
         QMessageBox::information(this, "Success", "All rows inserted successfully.");
