@@ -7,6 +7,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QApplication::setStyle("Fusion");a.setPalette(QPalette());
+
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -27,8 +30,11 @@ int main(int argc, char *argv[])
         QTextStream stream(&file);
         QString styleSheet = stream.readAll();
         qDebug() << "Stylesheet loaded successfully";
+        qDebug() << "StyleSheet content length:" << styleSheet.length();
         a.setStyleSheet(styleSheet);
-        l.setStyleSheet(styleSheet);
+        // l.setStyleSheet(styleSheet);
+
     }
+
     return a.exec();
 }

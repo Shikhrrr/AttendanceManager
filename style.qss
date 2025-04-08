@@ -1,5 +1,5 @@
 QWidget#sideBar QPushButton {
-    color: white;
+    color: black;
     border: none;
     padding: 10px 15px;
     font-size: 14px;
@@ -29,6 +29,8 @@ QWidget#sideBar {
 #stackedWidget QPushButton, QComboBox, QDateEdit{
     background-color: #7E99A3;
     padding: 5px;
+    color: black;
+    border-radius: 10px;
 }
 
 #stackedWidget QTableWidget, QTableView, QTabWidget {
@@ -38,5 +40,6 @@ QWidget#sideBar {
 
 QMainWindow {
     background-color: #1e1e1e;
+    color: black;
 }
 
