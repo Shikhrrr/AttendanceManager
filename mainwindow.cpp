@@ -13,6 +13,7 @@
 #include <QTextStream>
 #include <QSqlQueryModel>
 #include <QKeyEvent>
+#include "QCheckBox"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -266,72 +267,61 @@ void MainWindow::on_takeFetch_clicked()
         return;
     }
 
-    // ✅ Create a model for the table
-    QStandardItemModel *model = new QStandardItemModel(this);
-
-    // ✅ Set table headers
-    model->setHorizontalHeaderLabels(QStringList() << "ID" << "Name" << "Present");
+    // Clear and reset the table
+    ui->studentTable->clear();
+    ui->studentTable->setRowCount(0);
+    ui->studentTable->setColumnCount(3);
+    ui->studentTable->setHorizontalHeaderLabels(QStringList() << "ID" << "Name" << "Present");
 
     int row = 0;
     while (query.next()) {
         int studentId = query.value("roll").toInt();
         QString studentName = query.value("name").toString();
 
-        // ✅ Add ID and Name as table rows
-        QStandardItem *idItem = new QStandardItem(QString::number(studentId));
-        QStandardItem *nameItem = new QStandardItem(studentName);
+        ui->studentTable->insertRow(row);
 
-        // ✅ Add checkbox item
-        QStandardItem *checkboxItem = new QStandardItem();
-        checkboxItem->setCheckable(true);
-        checkboxItem->setCheckState(Qt::Unchecked);  // Initially unchecked
+        // ID
+        QTableWidgetItem *idItem = new QTableWidgetItem(QString::number(studentId));
+        idItem->setFlags(idItem->flags() ^ Qt::ItemIsEditable);
+        ui->studentTable->setItem(row, 0, idItem);
 
-        // ✅ Add items to the model
-        model->setItem(row, 0, idItem);
-        model->setItem(row, 1, nameItem);
-        model->setItem(row, 2, checkboxItem);
+        // Name
+        QTableWidgetItem *nameItem = new QTableWidgetItem(studentName);
+        nameItem->setFlags(nameItem->flags() ^ Qt::ItemIsEditable);
+        ui->studentTable->setItem(row, 1, nameItem);
+
+        // ✅ Styled checkbox as a widget
+        QCheckBox *checkbox = new QCheckBox();
+        checkbox->setObjectName("styledCheckbox"); // optional if you want to target specifically
+        checkbox->setFocusPolicy(Qt::StrongFocus); // ensures it can receive keyboard focus
+        checkbox->installEventFilter(this);
+        ui->studentTable->setCellWidget(row, 2, checkbox);
 
         row++;
     }
 
-    // ✅ Set the model to the `QTableView`
-    ui->studentTable->setModel(model);
     ui->studentTable->resizeColumnsToContents();
     ui->studentTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->studentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if ((obj == ui->studentTable || obj == ui->viewDateTable) && event->type() == QEvent::KeyPress) {
-        QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);  // ✅ Safe cast
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 
-        if (keyEvent && (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)) {
-            QTableView *tableView = qobject_cast<QTableView *>(obj);
-            if (!tableView) return false;
-
-            QModelIndex currentIndex = tableView->currentIndex();
-            if (!currentIndex.isValid()) return false;
-
-            int row = currentIndex.row();
-            int checkboxColumn = 2; // "Present" column
-
-            QAbstractItemModel *model = tableView->model();
-            QModelIndex checkboxIndex = model->index(row, checkboxColumn);
-
-            // ✅ Toggle checkbox state
-            Qt::CheckState currentState = static_cast<Qt::CheckState>(model->data(checkboxIndex, Qt::CheckStateRole).toInt());
-            Qt::CheckState newState = (currentState == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
-
-            model->setData(checkboxIndex, newState, Qt::CheckStateRole);
-
-            return true; // ✅ Event handled
+        if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+            QCheckBox *checkBox = qobject_cast<QCheckBox *>(obj);
+            if (checkBox) {
+                checkBox->toggle(); // switch state
+                return true;
+            }
         }
     }
 
     return QMainWindow::eventFilter(obj, event);
 }
+
 
 void MainWindow::on_studentTable_clicked(const QModelIndex &index)
 {
@@ -352,26 +342,16 @@ void MainWindow::on_studentTable_clicked(const QModelIndex &index)
 
 void MainWindow::on_takeMarkAll_clicked()
 {
-    // ✅ Get the model from the tableView
-    QAbstractItemModel *model = ui->studentTable->model();
+    int rowCount = ui->studentTable->rowCount();
 
-    if (!model) {
-        qDebug() << "No model found!";
-        return;
-    }
+    bool markAll = (ui->takeMarkAll->text() == "Mark All");
 
-    // ✅ Loop through all rows and set the checkbox checked
-    if (ui->takeMarkAll->text() == "Mark All") {
-        ui->takeMarkAll->setText("Remove All");
-        for (int row = 0; row < model->rowCount(); ++row) {
-            QModelIndex index = model->index(row, 2);  // Column 2: Checkbox column
-            model->setData(index, Qt::Checked, Qt::CheckStateRole);
-        }
-    } else {
-        ui->takeMarkAll->setText("Mark All");
-        for (int row = 0; row < model->rowCount(); ++row) {
-            QModelIndex index = model->index(row, 2);  // Column 2: Checkbox column
-            model->setData(index, Qt::Unchecked, Qt::CheckStateRole);
+    ui->takeMarkAll->setText(markAll ? "Remove All" : "Mark All");
+
+    for (int row = 0; row < rowCount; ++row) {
+        QWidget *widget = ui->studentTable->cellWidget(row, 2);  // Column 2 has the checkbox
+        if (QCheckBox *checkBox = qobject_cast<QCheckBox *>(widget)) {
+            checkBox->setChecked(markAll);
         }
     }
 }
@@ -627,11 +607,10 @@ void MainWindow::on_takeSubmit_clicked()
 
 void MainWindow::on_viewDateSubmit_clicked()
 {
-    QString date = ui->viewDateInput->date().toString("yyyy-MM-dd");  // Selected date
-    int year = ui->viewYear2->currentText().toInt();         // Selected year
-    QString branch = ui->viewBranch2->currentText();         // Selected branch
+    QString date = ui->viewDateInput->date().toString("yyyy-MM-dd");
+    int year = ui->viewYear2->currentText().toInt();
+    QString branch = ui->viewBranch2->currentText();
 
-    // ✅ Step 1: Prepare SQL Query
     QSqlQuery query;
     query.prepare(R"(
         SELECT s.roll, s.name, ar.status
@@ -646,7 +625,6 @@ void MainWindow::on_viewDateSubmit_clicked()
     query.addBindValue(year);
     query.addBindValue(branch);
 
-    // ✅ Step 2: Execute Query
     if (!query.exec()) {
         qDebug() << "Error fetching attendance records:" << query.lastError();
         return;
@@ -654,51 +632,40 @@ void MainWindow::on_viewDateSubmit_clicked()
 
     ui->downloadCSV2->setVisible(true);
 
-    // ✅ Step 3: Create Table Model
-    QStandardItemModel *model = new QStandardItemModel(this);
-    model->setColumnCount(3);
-    model->setHeaderData(0, Qt::Horizontal, "Roll No");
-    model->setHeaderData(1, Qt::Horizontal, "Name");
-    model->setHeaderData(2, Qt::Horizontal, "Present");  // Renamed column to "Present"
+    // ✅ Set up the QTableWidget
+    ui->viewDateTable->clearContents();
+    ui->viewDateTable->setRowCount(0);
+    ui->viewDateTable->setColumnCount(3);
+    ui->viewDateTable->setHorizontalHeaderLabels({"Roll No", "Name", "Present"});
 
-    // ✅ Step 4: Populate Table with Checkboxes
     int row = 0;
     while (query.next()) {
-        model->insertRow(row);
+        ui->viewDateTable->insertRow(row);
 
         // Roll No
-        QStandardItem *rollItem = new QStandardItem(query.value(0).toString());
-        rollItem->setFlags(rollItem->flags() & ~Qt::ItemIsEditable); // ❌ Make non-editable
+        QTableWidgetItem *rollItem = new QTableWidgetItem(query.value(0).toString());
+        rollItem->setFlags(rollItem->flags() & ~Qt::ItemIsEditable);
+        ui->viewDateTable->setItem(row, 0, rollItem);
 
         // Name
-        QStandardItem *nameItem = new QStandardItem(query.value(1).toString());
-        nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable); // ❌ Make non-editable
+        QTableWidgetItem *nameItem = new QTableWidgetItem(query.value(1).toString());
+        nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
+        ui->viewDateTable->setItem(row, 1, nameItem);
 
-        // Checkbox for Attendance Status
-        QStandardItem *statusItem = new QStandardItem();
-        statusItem->setCheckable(true);
+        // ✅ Add checkbox
+        QCheckBox *checkBox = new QCheckBox(this);
+        checkBox->setFocusPolicy(Qt::StrongFocus);
+        checkBox->installEventFilter(this);
 
-        // ✅ Set checkbox state (Present = ✅ Checked, Absent = ❌ Unchecked)
-        if (query.value(2).toString().toLower() == "present") {
-            statusItem->setCheckState(Qt::Checked);
-        } else {
-            statusItem->setCheckState(Qt::Unchecked);
-        }
+        QString status = query.value(2).toString().toLower();
+        checkBox->setChecked(status == "present");
 
-        // ✅ Add items to model
-        model->setItem(row, 0, rollItem);
-        model->setItem(row, 1, nameItem);
-        model->setItem(row, 2, statusItem);
+        ui->viewDateTable->setCellWidget(row, 2, checkBox);
 
         row++;
     }
 
-    // ✅ Step 5: Set the Model to the TableView
-    ui->viewDateTable->setModel(model);
     ui->viewDateTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->viewDateTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // ❌ Disable text editing
-
-    ui->downloadCSV->setVisible(true);
 }
 
 
@@ -840,11 +807,6 @@ void MainWindow::on_viewStatistics_clicked()
     ui->viewStatisticsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
-
-
-//this needs to be fixed
-
-
 void MainWindow::on_viewSearch4_clicked() {
     int year = ui->viewYear4->currentText().trimmed().toInt();
     QString branch = ui->viewBranch4->currentText().trimmed();
@@ -945,14 +907,15 @@ void MainWindow::on_dateDelete_clicked()
 void MainWindow::on_editSubmit_clicked()
 {
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Are you sure?", "Are you sure you want to edit the attendance for " +
-                                ui->viewDateInput->date().toString("yyyy-MM-dd")+"?",
-                                QMessageBox::Yes | QMessageBox::No);
+    reply = QMessageBox::question(this, "Are you sure?",
+                                  "Are you sure you want to edit the attendance for " + ui->viewDateInput->date().toString("yyyy-MM-dd") + "?",
+                                  QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::No) return;
 
     QString dateStr = ui->viewDateInput->date().toString("yyyy-MM-dd");
 
+    // ✅ Get date_id
     QSqlQuery dateQuery;
     dateQuery.prepare("SELECT date_id FROM attendance_dates WHERE date = ?");
     dateQuery.addBindValue(dateStr);
@@ -964,24 +927,25 @@ void MainWindow::on_editSubmit_clicked()
 
     int dateId = dateQuery.value(0).toInt();
 
-    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->viewDateTable->model());
-    if (!model) {
-        QMessageBox::warning(this, "Error", "Model not found or invalid.");
-        return;
-    }
-
+    // ✅ Loop through tableWidget rows and update the DB
     QSqlQuery updateQuery;
+    QTableWidget *table = ui->viewDateTable;
 
-    for (int row = 0; row < model->rowCount(); ++row) {
-        QString roll = model->item(row, 0)->text();
-        Qt::CheckState state = model->item(row, 2)->checkState();
-        QString status = (state == Qt::Checked) ? "Present" : "Absent";
+    for (int row = 0; row < table->rowCount(); ++row) {
+        QString roll = table->item(row, 0)->text();
+
+        QWidget *widget = table->cellWidget(row, 2);
+        QCheckBox *checkBox = qobject_cast<QCheckBox *>(widget);
+
+        if (!checkBox) continue;
+
+        QString status = checkBox->isChecked() ? "Present" : "Absent";
 
         updateQuery.prepare(R"(
-            UPDATE attendance_records
-            SET status = ?
-            WHERE roll = ? AND date_id = ?
-        )");
+        UPDATE attendance_records
+        SET status = ?
+        WHERE roll = ? AND date_id = ?
+    )");
 
         updateQuery.addBindValue(status);
         updateQuery.addBindValue(roll);
@@ -994,8 +958,9 @@ void MainWindow::on_editSubmit_clicked()
 
     QMessageBox::information(this, "Success", "Attendance updated successfully.");
 
-    delete model;
-    ui->viewDateTable->setModel(nullptr);
+    // Optional cleanup (if needed)
+    table->clearContents();
+    table->setRowCount(0);
 }
 
 
@@ -1110,4 +1075,3 @@ void MainWindow::on_downloadCSV2_clicked()
     ui->downloadCSV2->setVisible(false);
     QMessageBox::information(this, "Success", "Attendance report saved successfully.");
 }
-

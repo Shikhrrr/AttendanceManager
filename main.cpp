@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
         qDebug() << "Stylesheet loaded successfully";
         qDebug() << "StyleSheet content length:" << styleSheet.length();
         a.setStyleSheet(styleSheet);
-        // l.setStyleSheet(styleSheet);
+        l.setStyleSheet(styleSheet);
 
     }
 
