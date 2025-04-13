@@ -20,10 +20,11 @@ int main(int argc, char *argv[])
             break;
         }
     }
+
     Login l;
-    l.show();
+
     // QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
-    QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
+    QFile file("C:/Users/singl/OneDrive/Documents/AttendanceManager/style.qss");
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         qDebug() << "Failed to open style.qss";
     } else {
@@ -32,9 +33,12 @@ int main(int argc, char *argv[])
         qDebug() << "Stylesheet loaded successfully";
         qDebug() << "StyleSheet content length:" << styleSheet.length();
         a.setStyleSheet(styleSheet);
-        l.setStyleSheet(styleSheet);
+        // l.setStyleSheet(styleSheet);
 
     }
+
+
+    l.show();
 
     return a.exec();
 }

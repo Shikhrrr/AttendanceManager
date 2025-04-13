@@ -411,6 +411,16 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="viewAttendanceLayout">
+          <item row="0" column="0" alignment="Qt::AlignmentFlag::AlignHCenter">
+           <widget class="QLabel" name="viewHeading">
+            <property name="styleSheet">
+             <string notr="true">font: 24pt &quot;Segoe UI&quot;;</string>
+            </property>
+            <property name="text">
+             <string>View and Edit Attendance</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QTabWidget" name="viewPageTab">
             <property name="currentIndex">
@@ -943,16 +953,6 @@ color: black;</string>
             </widget>
            </widget>
           </item>
-          <item row="0" column="0" alignment="Qt::AlignmentFlag::AlignHCenter">
-           <widget class="QLabel" name="viewHeading">
-            <property name="styleSheet">
-             <string notr="true">font: 24pt &quot;Segoe UI&quot;;</string>
-            </property>
-            <property name="text">
-             <string>View and Edit Attendance</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </widget>
@@ -1228,6 +1228,12 @@ color:black;</string>
            <height>531</height>
           </rect>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>751</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="currentIndex">
           <number>2</number>
          </property>
@@ -1290,12 +1296,12 @@ color:black;</string>
            </property>
            <property name="dateTime">
             <datetime>
-             <hour>2</hour>
+             <hour>15</hour>
              <minute>30</minute>
              <second>0</second>
              <year>2024</year>
              <month>12</month>
-             <day>28</day>
+             <day>27</day>
             </datetime>
            </property>
           </widget>
