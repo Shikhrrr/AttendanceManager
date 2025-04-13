@@ -23,6 +23,23 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->studentTable, &QTableView::clicked, this, &MainWindow::on_studentTable_clicked);
 
+    // for ghost checkbox problem in Take attendance
+    // connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, [=](int index){
+    //     if (index != 0) {
+    //         // Clear current cell and focus ONLY when leaving the page
+    //         if (ui->studentTable->hasFocus()) {
+    //             ui->studentTable->clearSelection();
+    //             ui->studentTable->setCurrentCell(-1, -1);
+    //             QWidget *focusWidget = QApplication::focusWidget();
+    //             if (focusWidget && ui->studentTable->isAncestorOf(focusWidget)) {
+    //                 focusWidget->clearFocus();
+    //             }
+    //         }
+    //     }
+    // });
+
+
+
     ui->studentTable->installEventFilter(this);
 
     ui->viewDateTable->installEventFilter(this);
@@ -252,6 +269,58 @@ void MainWindow::on_reset_clicked()
 
 void MainWindow::on_takeFetch_clicked()
 {
+    // ui->takeMarkAll->show();
+    // QString selectedYear = ui->takeYear->currentText();
+    // QString selectedBranch = ui->takeBranch->currentText();
+
+    // QSqlQuery query;
+    // query.prepare("SELECT roll, name FROM student WHERE year = :year AND branch = :branch ORDER BY roll ASC");
+    // query.bindValue(":year", selectedYear[0]);
+    // query.bindValue(":branch", selectedBranch);
+
+    // if (!query.exec()) {
+    //     qDebug() << "Error fetching students:" << query.lastError().text();
+    //     QMessageBox::critical(this, "Error", "Failed to fetch students: " + query.lastError().text());
+    //     return;
+    // }
+
+    // // Clear and reset the table
+    // ui->studentTable->clear();
+    // ui->studentTable->setRowCount(0);
+    // ui->studentTable->setColumnCount(3);
+    // ui->studentTable->setHorizontalHeaderLabels(QStringList() << "ID" << "Name" << "Present");
+
+    // int row = 0;
+    // while (query.next()) {
+    //     int studentId = query.value("roll").toInt();
+    //     QString studentName = query.value("name").toString();
+
+    //     ui->studentTable->insertRow(row);
+
+    //     // ID
+    //     QTableWidgetItem *idItem = new QTableWidgetItem(QString::number(studentId));
+    //     idItem->setFlags(idItem->flags() ^ Qt::ItemIsEditable);
+    //     ui->studentTable->setItem(row, 0, idItem);
+
+    //     // Name
+    //     QTableWidgetItem *nameItem = new QTableWidgetItem(studentName);
+    //     nameItem->setFlags(nameItem->flags() ^ Qt::ItemIsEditable);
+    //     ui->studentTable->setItem(row, 1, nameItem);
+
+    //     // ✅ Styled checkbox as a widget
+    //     QCheckBox *checkbox = new QCheckBox();
+    //     checkbox->setObjectName("styledCheckbox"); // optional if you want to target specifically
+    //     checkbox->setFocusPolicy(Qt::StrongFocus); // ensures it can receive keyboard focus
+    //     checkbox->installEventFilter(this);
+    //     ui->studentTable->setCellWidget(row, 2, checkbox);
+
+    //     row++;
+    // }
+
+    // ui->studentTable->resizeColumnsToContents();
+    // ui->studentTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    // ui->studentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     ui->takeMarkAll->show();
     QString selectedYear = ui->takeYear->currentText();
     QString selectedBranch = ui->takeBranch->currentText();
@@ -267,8 +336,8 @@ void MainWindow::on_takeFetch_clicked()
         return;
     }
 
-    // Clear and reset the table
-    ui->studentTable->clear();
+    // ✅ Clear table content without deleting headers
+    ui->studentTable->clearContents();
     ui->studentTable->setRowCount(0);
     ui->studentTable->setColumnCount(3);
     ui->studentTable->setHorizontalHeaderLabels(QStringList() << "ID" << "Name" << "Present");
@@ -282,25 +351,26 @@ void MainWindow::on_takeFetch_clicked()
 
         // ID
         QTableWidgetItem *idItem = new QTableWidgetItem(QString::number(studentId));
-        idItem->setFlags(idItem->flags() ^ Qt::ItemIsEditable);
+        idItem->setFlags(idItem->flags() & ~Qt::ItemIsEditable);
         ui->studentTable->setItem(row, 0, idItem);
 
         // Name
         QTableWidgetItem *nameItem = new QTableWidgetItem(studentName);
-        nameItem->setFlags(nameItem->flags() ^ Qt::ItemIsEditable);
+        nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
         ui->studentTable->setItem(row, 1, nameItem);
 
-        // ✅ Styled checkbox as a widget
-        QCheckBox *checkbox = new QCheckBox();
-        checkbox->setObjectName("styledCheckbox"); // optional if you want to target specifically
-        checkbox->setFocusPolicy(Qt::StrongFocus); // ensures it can receive keyboard focus
-        checkbox->installEventFilter(this);
-        ui->studentTable->setCellWidget(row, 2, checkbox);
+        // ✅ Add stable checkbox
+        QCheckBox *checkBox = new QCheckBox(this);
+        checkBox->setObjectName("takeAttendanceCheckBox");
+        checkBox->setFocusPolicy(Qt::StrongFocus);
+        checkBox->installEventFilter(this);  // optional if you're using styling
+
+        ui->studentTable->setCellWidget(row, 2, checkBox);
 
         row++;
     }
 
-    ui->studentTable->resizeColumnsToContents();
+    // ✅ Preserve styling and layout
     ui->studentTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->studentTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }

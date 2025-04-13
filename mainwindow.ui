@@ -132,7 +132,7 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="p0">
         <layout class="QGridLayout" name="gridLayout_2">
@@ -414,7 +414,7 @@
           <item row="1" column="0">
            <widget class="QTabWidget" name="viewPageTab">
             <property name="currentIndex">
-             <number>4</number>
+             <number>1</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -1153,65 +1153,53 @@ color: black;</string>
             <attribute name="title">
              <string>Insert Database</string>
             </attribute>
-            <widget class="QLabel" name="label_14">
+            <widget class="QWidget" name="">
              <property name="geometry">
               <rect>
-               <x>160</x>
-               <y>70</y>
-               <width>141</width>
-               <height>20</height>
+               <x>210</x>
+               <y>130</y>
+               <width>340</width>
+               <height>135</height>
               </rect>
              </property>
-             <property name="styleSheet">
-              <string notr="true">font: 12pt &quot;Segoe UI&quot;;
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item alignment="Qt::AlignmentFlag::AlignHCenter">
+               <widget class="QLabel" name="label_14">
+                <property name="styleSheet">
+                 <string notr="true">font: 12pt &quot;Segoe UI&quot;;
 color:black;</string>
-             </property>
-             <property name="text">
-              <string>Update Databse</string>
-             </property>
-            </widget>
-            <widget class="QPushButton" name="updateDb">
-             <property name="geometry">
-              <rect>
-               <x>190</x>
-               <y>120</y>
-               <width>83</width>
-               <height>29</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Update</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_16">
-             <property name="geometry">
-              <rect>
-               <x>430</x>
-               <y>70</y>
-               <width>341</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">font: 12pt &quot;Segoe UI&quot;;
+                </property>
+                <property name="text">
+                 <string>Update Database</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="updateDb">
+                <property name="text">
+                 <string>Update</string>
+                </property>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignmentFlag::AlignHCenter">
+               <widget class="QLabel" name="label_16">
+                <property name="styleSheet">
+                 <string notr="true">font: 12pt &quot;Segoe UI&quot;;
 color:black;</string>
-             </property>
-             <property name="text">
-              <string>Replace current database with new one</string>
-             </property>
-            </widget>
-            <widget class="QPushButton" name="replaceDb">
-             <property name="geometry">
-              <rect>
-               <x>560</x>
-               <y>120</y>
-               <width>83</width>
-               <height>29</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Replace</string>
-             </property>
+                </property>
+                <property name="text">
+                 <string>Replace current database with new one</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="replaceDb">
+                <property name="text">
+                 <string>Replace</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </widget>
           </widget>
@@ -1290,12 +1278,12 @@ color:black;</string>
            </property>
            <property name="dateTime">
             <datetime>
-             <hour>2</hour>
-             <minute>30</minute>
+             <hour>21</hour>
+             <minute>0</minute>
              <second>0</second>
              <year>2024</year>
              <month>12</month>
-             <day>28</day>
+             <day>27</day>
             </datetime>
            </property>
           </widget>

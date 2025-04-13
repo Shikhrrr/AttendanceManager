@@ -30,7 +30,7 @@ QWidget#sideBar {
 #stackedWidget QPushButton, QComboBox, QDateEdit{
     background-color: #333D79FF;
     padding: 5px;
-    color: blue;
+    color: black;
     border-radius: 10px;
     font-size: 15px;
 }
@@ -75,4 +75,11 @@ QLabel {
 
 QMessageBox{
     color: white;
+}
+
+QComboBox QAbstractItemView {
+    background-color: white;
+    color: black;
+    selection-background-color: #444;
+    selection-color: white;
 }
