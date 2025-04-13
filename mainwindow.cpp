@@ -493,7 +493,7 @@ void MainWindow::on_submitCSV_clicked()
         for (int col = 0; col < ui->tableCSV->columnCount(); ++col) {
             values << "'" + ui->tableCSV->item(row, col)->text().trimmed() + "'";
         }
-
+        //***************************** year, branch
         QString sqlQuery = QString("INSERT INTO student (roll, name, year, branch) VALUES (%1)").arg(values.join(", "));
 
         qDebug() << "Executing query:" << sqlQuery;  // Log the query
@@ -535,75 +535,67 @@ void MainWindow::on_cancelCSV_clicked()
 
 void MainWindow::on_takeSubmit_clicked()
 {
-    // Get today's date
     QString todayDate = QDate::currentDate().toString("yyyy-MM-dd");
-
-    // Get the selected year and branch
     int year = ui->takeYear->currentText().toInt();
     QString branch = ui->takeBranch->currentText();
 
     QSqlDatabase db = QSqlDatabase::database();
     QSqlQuery query(db);
 
-    // Step 1: Get date_id for today's date (or insert if not exists)
+    // Step 1: Get or insert date_id
     query.prepare("SELECT date_id FROM attendance_dates WHERE date = ?");
     query.addBindValue(todayDate);
-    if (!query.exec() || !query.next()) {
-        // If the date doesn't exist, insert it
+    int dateId = -1;
+
+    if (query.exec() && query.next()) {
+        dateId = query.value(0).toInt();
+    } else {
         query.prepare("INSERT INTO attendance_dates (date) VALUES (?)");
         query.addBindValue(todayDate);
         if (!query.exec()) {
             qDebug() << "Error inserting attendance date:" << query.lastError();
             return;
         }
-        // Retrieve the new date_id
-        int newDateId = query.lastInsertId().toInt();
-        query.prepare("SELECT date_id FROM attendance_dates WHERE date = ?");
-        query.addBindValue(todayDate);
-        if (!query.exec() || !query.next()) {
-            qDebug() << "Error retrieving new date_id:" << query.lastError();
-            return;
-        }
+        dateId = query.lastInsertId().toInt();
     }
-    int dateId = query.value(0).toInt();  // Retrieved date_id
 
-    // Step 2: Iterate through studentTable to mark attendance
-    for (int row = 0; row < ui->studentTable->model()->rowCount(); ++row) {
-        QModelIndex index = ui->studentTable->model()->index(row, 0);
-        QString roll = index.data().toString();
+    // Step 2: Loop through studentTable
+    QTableWidget *table = ui->studentTable;
 
-        QModelIndex checkboxIndex = ui->studentTable->model()->index(row, 2);
-        bool isChecked = checkboxIndex.data(Qt::CheckStateRole) == Qt::Checked;
+    for (int row = 0; row < table->rowCount(); ++row) {
+        QString roll = table->item(row, 0)->text();
 
-        QString status = isChecked ? "Present" : "Absent";
+        QCheckBox *checkbox = qobject_cast<QCheckBox *>(table->cellWidget(row, 2));
+        QString status = (checkbox && checkbox->isChecked()) ? "Present" : "Absent";
 
-        // Step 3: Check if attendance for this student on this date already exists
-        query.prepare("SELECT COUNT(*) FROM attendance_records WHERE roll = ? AND date_id = ?");
-        query.addBindValue(roll);
-        query.addBindValue(dateId);
-        if (!query.exec() || !query.next()) {
-            qDebug() << "Error checking existing attendance:" << query.lastError();
+        // Check if attendance already exists
+        QSqlQuery checkQuery;
+        checkQuery.prepare("SELECT COUNT(*) FROM attendance_records WHERE roll = ? AND date_id = ?");
+        checkQuery.addBindValue(roll);
+        checkQuery.addBindValue(dateId);
+        if (!checkQuery.exec() || !checkQuery.next()) {
+            qDebug() << "Error checking attendance:" << checkQuery.lastError();
             continue;
         }
 
-        int count = query.value(0).toInt();
-        if (count == 0) {  // Insert only if attendance is not already marked
-            query.prepare("INSERT INTO attendance_records (roll, date_id, status) VALUES (?, ?, ?)");
-            query.addBindValue(roll);
-            query.addBindValue(dateId);
-            query.addBindValue(status);
+        if (checkQuery.value(0).toInt() == 0) {
+            QSqlQuery insertQuery;
+            insertQuery.prepare("INSERT INTO attendance_records (roll, date_id, status) VALUES (?, ?, ?)");
+            insertQuery.addBindValue(roll);
+            insertQuery.addBindValue(dateId);
+            insertQuery.addBindValue(status);
 
-            if (!query.exec()) {
-                qDebug() << "Error inserting attendance record:" << query.lastError();
+            if (!insertQuery.exec()) {
+                qDebug() << "Error inserting attendance for" << roll << ":" << insertQuery.lastError();
             }
         } else {
-            qDebug() << "Attendance already marked for student" << roll << " on " << todayDate;
+            QMessageBox::warning(this, "Already marked", "Attendance already marked. You can edit it in the View tab.");
+            return;
         }
     }
 
     QMessageBox::information(this, "Success", "Attendance submitted successfully!");
 }
-
 
 void MainWindow::on_viewDateSubmit_clicked()
 {
@@ -805,6 +797,8 @@ void MainWindow::on_viewStatistics_clicked()
     ui->viewStatisticsTable->resizeColumnsToContents();
     ui->viewStatisticsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->viewStatisticsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    ui->downloadCSV->setVisible(true);
 }
 
 void MainWindow::on_viewSearch4_clicked() {
@@ -1075,3 +1069,314 @@ void MainWindow::on_downloadCSV2_clicked()
     ui->downloadCSV2->setVisible(false);
     QMessageBox::information(this, "Success", "Attendance report saved successfully.");
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    // Step 1: Format the current timestamp
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss");
+
+    // Step 2: Default filename with timestamp
+    QString defaultFileName = "attendance_backup_" + timestamp + ".db";
+
+    // Step 3: Ask user to choose the location to save
+    QString backupPath = QFileDialog::getSaveFileName(
+        this,
+        "Save Database Backup",
+        QDir::homePath() + "/" + defaultFileName,
+        "SQLite Database (*.db)"
+        );
+
+    if (backupPath.isEmpty()) {
+        return; // User cancelled
+    }
+
+    // Step 4: Get current database path
+    QString dbPath = QSqlDatabase::database().databaseName();
+
+    // Step 5: Try copying the file
+    if (QFile::copy(dbPath, backupPath)) {
+        QMessageBox::information(this, "Backup Successful", "Database backup saved at:\n" + backupPath);
+    } else {
+        QMessageBox::critical(this, "Backup Failed", "Failed to create backup. Make sure the file is not in use and try again.");
+    }
+}
+
+void MainWindow::on_updateDb_clicked()
+{
+    // Step 1: Let the user select the file to import
+    QString fileName = QFileDialog::getOpenFileName(this, "Select Database to Update", "", "SQLite Files (*.db);;All Files (*)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    // Step 2: Confirm the update
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirm Update", "Are you sure you want to update the current database with the imported one?",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::No) {
+        return;
+    }
+
+    // Step 3: Open the imported database
+    QSqlDatabase importDb = QSqlDatabase::addDatabase("QSQLITE", "importDb");
+    importDb.setDatabaseName(fileName);
+
+    if (!importDb.open()) {
+        QMessageBox::critical(this, "Error", "Failed to open the imported database.");
+        return;
+    }
+
+    // Step 4: Merge tables from imported DB (example: copying data from `student` table)
+    QSqlQuery query(importDb);
+    query.prepare("SELECT * FROM student");  // Example: student table
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to read from the imported database.");
+        return;
+    }
+
+    // Step 5: Insert or update data in the current database
+    QSqlQuery insertQuery;
+    while (query.next()) {
+        QString roll = query.value("roll").toString();
+        QString name = query.value("name").toString();
+        int year = query.value("year").toInt();
+        QString branch = query.value("branch").toString();
+
+        // Check if the record already exists (based on roll number)
+        QSqlQuery checkQuery;
+        checkQuery.prepare("SELECT COUNT(*) FROM student WHERE roll = ?");
+        checkQuery.addBindValue(roll);
+        if (!checkQuery.exec()) {
+            QMessageBox::critical(this, "Error", "Failed to check for existing records.");
+            return;
+        }
+
+        checkQuery.next();
+        int count = checkQuery.value(0).toInt();
+
+        if (count > 0) {
+            // Update record if exists
+            insertQuery.prepare("UPDATE student SET name = ?, year = ?, branch = ? WHERE roll = ?");
+            insertQuery.addBindValue(name);
+            insertQuery.addBindValue(year);
+            insertQuery.addBindValue(branch);
+            insertQuery.addBindValue(roll);
+        } else {
+            // Insert new record
+            insertQuery.prepare("INSERT INTO student (roll, name, year, branch) VALUES (?, ?, ?, ?)");
+            insertQuery.addBindValue(roll);
+            insertQuery.addBindValue(name);
+            insertQuery.addBindValue(year);
+            insertQuery.addBindValue(branch);
+        }
+
+        if (!insertQuery.exec()) {
+            QMessageBox::critical(this, "Error", "Failed to insert or update record: " + insertQuery.lastError().text());
+            return;
+        }
+    }
+
+    // Step 6: Close the imported DB
+    importDb.close();
+
+    QMessageBox::information(this, "Success", "Database updated successfully!");
+}
+
+
+void MainWindow::on_replaceDb_clicked()
+{
+    QString currentDbPath = QCoreApplication::applicationDirPath() + "/sample.db";
+
+    // Step 1: Ask user to select the database to import
+    QString importPath = QFileDialog::getOpenFileName(this, "Select Database to Import", "", "Database Files (*.db)");
+    if (importPath.isEmpty())
+        return;
+
+    // Step 2: Confirm replacement
+    QMessageBox::StandardButton confirm = QMessageBox::question(this, "Replace Database",
+                                                                "This will completely replace your current database with the selected one.\nDo you want to continue?",
+                                                                QMessageBox::Yes | QMessageBox::No);
+
+    if (confirm != QMessageBox::Yes)
+        return;
+
+    // Step 3: Ask to back up current database
+    QMessageBox::StandardButton backupConfirm = QMessageBox::question(this, "Create Backup",
+                                                                      "Do you want to create a backup of your current database before replacing it?",
+                                                                      QMessageBox::Yes | QMessageBox::No);
+
+    if (backupConfirm == QMessageBox::Yes) {
+        QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+        QString backupPath = QCoreApplication::applicationDirPath() + "/backup_" + timestamp + ".db";
+        if (!QFile::copy(currentDbPath, backupPath)) {
+            QMessageBox::warning(this, "Backup Failed", "Failed to create backup.");
+            return;
+        }
+    }
+
+    // Step 4: Close current DB connection
+    QSqlDatabase::database().close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+
+    // Step 5: Replace the database file
+    if (!QFile::remove(currentDbPath)) {
+        QMessageBox::critical(this, "Error", "Failed to remove the existing database file.");
+        return;
+    }
+
+    if (!QFile::copy(importPath, currentDbPath)) {
+        QMessageBox::critical(this, "Error", "Failed to replace the database file.");
+        return;
+    }
+
+    // Step 6: Reopen the replaced database
+    QSqlDatabase newDb = QSqlDatabase::addDatabase("QSQLITE");
+    newDb.setDatabaseName(currentDbPath);
+    if (!newDb.open()) {
+        QMessageBox::critical(this, "Error", "Database replaced but failed to open new database.\n" + newDb.lastError().text());
+        return;
+    }
+
+    QMessageBox::information(this, "Success", "Database replaced and loaded successfully.");
+}
+
+
+void MainWindow::on_deleteBatch_clicked()
+{
+    // Get selected year and branch
+    int year = ui->deleteBatchYear->currentText().toInt();
+    QString branch = ui->deleteBatchBranch->currentText();
+
+    // Check if the batch exists
+    QSqlQuery checkBatchQuery;
+    checkBatchQuery.prepare("SELECT COUNT(*) FROM student WHERE year = ? AND branch = ?");
+    checkBatchQuery.addBindValue(year);
+    checkBatchQuery.addBindValue(branch);
+
+    if (!checkBatchQuery.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to check if batch exists: " + checkBatchQuery.lastError().text());
+        return;
+    }
+
+    checkBatchQuery.next();
+    int count = checkBatchQuery.value(0).toInt();
+
+    if (count == 0) {
+        // If no students exist for this batch, show an error and return
+        QMessageBox::warning(this, "Error", "No students found for batch " + QString::number(year) + " " + branch);
+        return;
+    }
+
+    // Ask user if they want to save the batch report
+    QMessageBox::StandardButton saveReportReply = QMessageBox::question(this, "Save Batch Report",
+                                                                        "Do you want to save a report of the batch before deleting it?",
+                                                                        QMessageBox::Yes | QMessageBox::No);
+
+    if (saveReportReply == QMessageBox::Yes) {
+        // Generate the CSV report for the batch
+        QString filePath = QFileDialog::getSaveFileName(this, "Save CSV Report", "", "CSV Files (*.csv)");
+
+        if (filePath.isEmpty()) {
+            return;  // User canceled the file dialog
+        }
+
+        // Prepare query to get attendance details for the batch
+        QSqlQuery query;
+        query.prepare(R"(
+            SELECT s.roll, s.name,
+                   COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) AS classes_attended,
+                   (SELECT COUNT(DISTINCT ad.date_id)
+                    FROM attendance_dates ad
+                    JOIN attendance_records ar2 ON ad.date_id = ar2.date_id
+                    JOIN student s2 ON ar2.roll = s2.roll
+                    WHERE s2.year = s.year AND s2.branch = s.branch) AS total_classes_held,
+                   ROUND(
+                       (COUNT(CASE WHEN ar.status = 'Present' THEN 1 END) * 100.0) /
+                       NULLIF((SELECT COUNT(DISTINCT ad.date_id)
+                               FROM attendance_dates ad
+                               JOIN attendance_records ar2 ON ad.date_id = ar2.date_id
+                               JOIN student s2 ON ar2.roll = s2.roll
+                               WHERE s2.year = s.year AND s2.branch = s.branch), 0),
+                       2
+                   ) AS percentage
+            FROM student s
+            LEFT JOIN attendance_records ar ON s.roll = ar.roll
+            WHERE s.year = ? AND s.branch = ?
+            GROUP BY s.roll, s.name
+            ORDER BY s.roll;
+        )");
+
+        query.addBindValue(year);
+        query.addBindValue(branch);
+
+        if (!query.exec()) {
+            qDebug() << "Error fetching attendance statistics:" << query.lastError().text();
+            return;
+        }
+
+        // Write the data to CSV file
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::warning(this, "Error", "Unable to open file for writing.");
+            return;
+        }
+
+        QTextStream out(&file);
+        out << "Roll Number,Name,Classes Attended,Total Classes Held,Attendance Percentage\n";  // Column headers
+
+        bool dataFound = false; // Flag to check if data exists
+
+        while (query.next()) {
+            out << query.value(0).toString() + ","
+                << query.value(1).toString() + ","
+                << query.value(2).toString() + ","
+                << query.value(3).toString() + ","
+                << query.value(4).toString() + "%\n";  // Attendance data
+            dataFound = true;
+        }
+
+        file.close();
+
+        if (!dataFound) {
+            QMessageBox::warning(this, "No Data", "No attendance data found for this batch.");
+            return;
+        }
+
+        QMessageBox::information(this, "Success", "Batch report saved successfully.");
+    }
+
+    // Ask user to confirm batch deletion
+    QMessageBox::StandardButton confirm = QMessageBox::question(
+        this, "Confirm Deletion",
+        "Are you sure you want to delete all students of batch " + QString::number(year) + " " + branch + "?",
+        QMessageBox::Yes | QMessageBox::No
+        );
+
+    if (confirm != QMessageBox::Yes)
+        return;
+
+    // Step 2: Delete all students of the selected batch
+    QSqlQuery deleteQuery;
+    deleteQuery.prepare("DELETE FROM student WHERE year = ? AND branch = ?");
+    deleteQuery.addBindValue(year);
+    deleteQuery.addBindValue(branch);
+
+    if (!deleteQuery.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to delete batch: " + deleteQuery.lastError().text());
+        return;
+    }
+
+    // Optional: Also delete attendance records for the batch (if necessary)
+    QSqlQuery deleteAttendanceQuery;
+    deleteAttendanceQuery.prepare("DELETE FROM attendance_records WHERE roll IN (SELECT roll FROM student WHERE year = ? AND branch = ?)");
+    deleteAttendanceQuery.addBindValue(year);
+    deleteAttendanceQuery.addBindValue(branch);
+
+    if (!deleteAttendanceQuery.exec()) {
+        QMessageBox::critical(this, "Error", "Failed to delete attendance records: " + deleteAttendanceQuery.lastError().text());
+        return;
+    }
+
+    QMessageBox::information(this, "Success", "Batch " + QString::number(year) + " " + branch + " deleted successfully.");
+}
+

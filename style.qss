@@ -36,10 +36,10 @@ QWidget#sideBar {
 }
 
 #stackedWidget QTableWidget, QTableView, QTabWidget {
-    background-color: #333D79FF;
+    background-color: white;
     border-radius: 15px;
     font-size: 15px;
-    color: blue;
+    color: black;
 }
 
 QMainWindow {
