@@ -1,0 +1,78 @@
+QWidget#sideBar QPushButton {
+    color: black;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 10px;
+    background-color: #FAEBEFFF;
+}
+
+QWidget#sideBar QPushButton:hover {
+    border-radius: 10px;
+    padding: 5px;
+}
+
+QWidget#sideBar QPushButton:pressed {
+
+}
+
+QWidget#sideBar {
+    background-color: #333D79FF;
+    border-radius: 15px;
+}
+
+#stackedWidget {
+    border-radius: 15px;
+    background-color: #FAEBEFFF;
+    color: #333D79FF;
+}
+
+#stackedWidget QPushButton, QComboBox, QDateEdit{
+    background-color: #333D79FF;
+    padding: 5px;
+    color: blue;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+#stackedWidget QTableWidget, QTableView, QTabWidget {
+    background-color: white;
+    border-radius: 15px;
+    font-size: 15px;
+    color: black;
+}
+
+QMainWindow {
+    background-color: #1e1e1e;
+    color: black;
+}
+
+QLabel {
+    color: black;
+}
+
+#stackedWidget QCheckBox {
+    spacing: 10px;
+}
+
+#stackedWidget QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 2px solid #bbb;
+    background-color: white;
+}
+
+#stackedWidget QCheckBox::indicator:checked {
+    background-color: #00c853;  /* Green checkbox when checked */
+    border: 2px solid #00c853;
+}
+
+#stackedWidget QCheckBox::indicator:unchecked {
+    background-color: red;  /* Light gray when unchecked */
+    border: 2px solid #bbb;
+}
+
+QMessageBox{
+    color: white;
+}

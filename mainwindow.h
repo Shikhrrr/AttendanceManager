@@ -95,6 +95,15 @@ private slots:
 
     void on_downloadCSV2_clicked();
 
+    void on_pushButton_clicked();
+
+
+    void on_updateDb_clicked();
+
+    void on_replaceDb_clicked();
+
+    void on_deleteBatch_clicked();
+
 private:
     Ui::MainWindow *ui;
     int collapsedWidth;
