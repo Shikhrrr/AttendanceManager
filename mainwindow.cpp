@@ -54,6 +54,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     collapsedWidth = ui->collapseSideBar->width();
     fullWidth = ui->sideBar->maximumWidth();
+    ui->sideBar->setFixedWidth(fullWidth);
+     // Ensure it's not collapsed on startup
+
     collapsedHeight = ui->collapseSideBar->height();
 
     // ✅ Connect to the database

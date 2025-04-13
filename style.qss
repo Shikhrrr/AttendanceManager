@@ -73,8 +73,25 @@ QLabel {
     border: 2px solid #bbb;
 }
 
-QMessageBox{
-    color: white;
+QMessageBox {
+    background-color: white;
+    color: black;
+    font-size: 14px;
+}
+
+#Login{
+    background-color: white;
+    color: black;
+}
+
+#Login QPushButton{
+    background-color: white;
+    color: black;
+}
+
+#Login QCheckBox{
+    background-color: white;
+    color: black;
 }
 
 QComboBox QAbstractItemView {
