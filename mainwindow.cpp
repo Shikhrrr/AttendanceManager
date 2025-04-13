@@ -668,6 +668,8 @@ void MainWindow::on_takeSubmit_clicked()
     }
 
     QMessageBox::information(this, "Success", "Attendance submitted successfully!");
+    table->clearContents();
+    table->setRowCount(0);
 }
 
 void MainWindow::on_viewDateSubmit_clicked()

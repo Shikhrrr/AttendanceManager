@@ -24,7 +24,11 @@ int main(int argc, char *argv[])
     Login l;
 
     // QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
-    QFile file("C:/Users/singl/OneDrive/Documents/AttendanceManager/style.qss");
+    // QFile file("C:/Users/shikh/OneDrive/Documents/AttendanceManager/style.qss");
+
+    QFile file;
+    QString stylePath = QCoreApplication::applicationDirPath() + "/style.qss";
+    file.setFileName(stylePath);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         qDebug() << "Failed to open style.qss";
     } else {

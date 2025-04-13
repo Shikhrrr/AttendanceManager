@@ -85,8 +85,11 @@ QMessageBox {
 }
 
 #Login QPushButton{
-    background-color: white;
+    background-color: #333D79FF;
+    padding: 5px;
     color: black;
+    border-radius: 10px;
+    font-size: 15px;
 }
 
 #Login QCheckBox{
@@ -99,4 +102,17 @@ QComboBox QAbstractItemView {
     color: black;
     selection-background-color: #444;
     selection-color: white;
+}
+
+#Login QLineEdit {
+    background-color: #333D79FF;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+}
+#stackedWidget QLineEdit {
+    background-color: #333D79FF;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
 }

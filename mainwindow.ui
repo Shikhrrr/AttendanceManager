@@ -132,7 +132,7 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="p0">
         <layout class="QGridLayout" name="gridLayout_2">
@@ -156,6 +156,26 @@
            <item>
             <property name="text">
              <string>4</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>5</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>6</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>7</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>8</string>
             </property>
            </item>
           </widget>
@@ -188,12 +208,22 @@
           <widget class="QComboBox" name="takeBranch">
            <item>
             <property name="text">
-             <string>CSE</string>
+             <string>CSEA</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>CSEB</string>
             </property>
            </item>
            <item>
             <property name="text">
              <string>IT</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>DSA</string>
             </property>
            </item>
           </widget>
@@ -239,14 +269,14 @@
          <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
-            <x>60</x>
-            <y>80</y>
-            <width>137</width>
-            <height>130</height>
+            <x>40</x>
+            <y>50</y>
+            <width>181</width>
+            <height>151</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
+           <item alignment="Qt::AlignmentFlag::AlignHCenter">
             <widget class="QLabel" name="label_4">
              <property name="styleSheet">
               <string notr="true">font: 28pt &quot;Segoe UI&quot;;</string>
@@ -265,7 +295,7 @@
                </property>
               </widget>
              </item>
-             <item>
+             <item alignment="Qt::AlignmentFlag::AlignHCenter">
               <widget class="QLabel" name="currentName">
                <property name="text">
                 <string/>
@@ -424,7 +454,7 @@
           <item row="1" column="0">
            <widget class="QTabWidget" name="viewPageTab">
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -446,7 +476,7 @@
                <item row="0" column="0">
                 <widget class="QLabel" name="label_15">
                  <property name="text">
-                  <string>Select Year</string>
+                  <string>Select Semester</string>
                  </property>
                 </widget>
                </item>
@@ -479,13 +509,38 @@
                    <string>4</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>5</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>6</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>7</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>8</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="1" column="1">
                 <widget class="QComboBox" name="viewBranch3">
                  <item>
                   <property name="text">
-                   <string>CSE</string>
+                   <string>CSEA</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CSEB</string>
                   </property>
                  </item>
                  <item>
@@ -542,12 +597,12 @@
                <rect>
                 <x>320</x>
                 <y>10</y>
-                <width>81</width>
+                <width>111</width>
                 <height>21</height>
                </rect>
               </property>
               <property name="text">
-               <string>Select Year</string>
+               <string>Select Semester</string>
               </property>
              </widget>
              <widget class="QLabel" name="label_13">
@@ -592,6 +647,26 @@
                 <string>4</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>5</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>6</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>7</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>8</string>
+               </property>
+              </item>
              </widget>
              <widget class="QComboBox" name="viewBranch2">
               <property name="geometry">
@@ -604,7 +679,12 @@
               </property>
               <item>
                <property name="text">
-                <string>CSE</string>
+                <string>CSEA</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>CSEB</string>
                </property>
               </item>
               <item>
@@ -689,42 +769,6 @@
              <attribute name="title">
               <string>View Students</string>
              </attribute>
-             <widget class="QLineEdit" name="viewRoll3">
-              <property name="geometry">
-               <rect>
-                <x>290</x>
-                <y>80</y>
-                <width>113</width>
-                <height>28</height>
-               </rect>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_23">
-              <property name="geometry">
-               <rect>
-                <x>330</x>
-                <y>50</y>
-                <width>41</width>
-                <height>20</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Roll</string>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_27">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>20</y>
-                <width>111</width>
-                <height>20</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Search a student</string>
-              </property>
-             </widget>
              <widget class="QTableWidget" name="viewStudentSearchTable">
               <property name="geometry">
                <rect>
@@ -735,18 +779,41 @@
                </rect>
               </property>
              </widget>
-             <widget class="QPushButton" name="viewSearch3">
+             <widget class="QWidget" name="">
               <property name="geometry">
                <rect>
-                <x>310</x>
-                <y>130</y>
-                <width>83</width>
-                <height>29</height>
+                <x>290</x>
+                <y>20</y>
+                <width>127</width>
+                <height>120</height>
                </rect>
               </property>
-              <property name="text">
-               <string>Search</string>
-              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                <widget class="QLabel" name="label_27">
+                 <property name="text">
+                  <string>Search a student</string>
+                 </property>
+                </widget>
+               </item>
+               <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                <widget class="QLabel" name="label_23">
+                 <property name="text">
+                  <string>Enter Roll</string>
+                 </property>
+                </widget>
+               </item>
+               <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                <widget class="QLineEdit" name="viewRoll3"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="viewSearch3">
+                 <property name="text">
+                  <string>Search</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </widget>
             <widget class="QWidget" name="tab_4">
@@ -764,7 +831,12 @@
               </property>
               <item>
                <property name="text">
-                <string>CSE</string>
+                <string>CSEA</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>CSEB</string>
                </property>
               </item>
               <item>
@@ -796,12 +868,12 @@
                <rect>
                 <x>320</x>
                 <y>20</y>
-                <width>63</width>
+                <width>71</width>
                 <height>20</height>
                </rect>
               </property>
               <property name="text">
-               <string>Year</string>
+               <string>Semester</string>
               </property>
              </widget>
              <widget class="QComboBox" name="viewYear4">
@@ -831,6 +903,26 @@
               <item>
                <property name="text">
                 <string>4</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>5</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>6</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>7</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>8</string>
                </property>
               </item>
              </widget>
@@ -920,35 +1012,35 @@
              <attribute name="title">
               <string>Backup Database</string>
              </attribute>
-             <widget class="QLabel" name="label_5">
+             <widget class="QWidget" name="">
               <property name="geometry">
                <rect>
                 <x>200</x>
                 <y>80</y>
-                <width>351</width>
-                <height>31</height>
+                <width>345</width>
+                <height>68</height>
                </rect>
               </property>
-              <property name="styleSheet">
-               <string notr="true">font: 13pt &quot;Segoe UI&quot;;
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                <widget class="QLabel" name="label_5">
+                 <property name="styleSheet">
+                  <string notr="true">font: 13pt &quot;Segoe UI&quot;;
 color: black;</string>
-              </property>
-              <property name="text">
-               <string>Create a backup of the current data</string>
-              </property>
-             </widget>
-             <widget class="QPushButton" name="pushButton">
-              <property name="geometry">
-               <rect>
-                <x>310</x>
-                <y>130</y>
-                <width>111</width>
-                <height>29</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Create Backup</string>
-              </property>
+                 </property>
+                 <property name="text">
+                  <string>Create a backup of the current data</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton">
+                 <property name="text">
+                  <string>Create Backup</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </widget>
            </widget>
@@ -971,7 +1063,7 @@ color: black;</string>
          <item row="1" column="0">
           <widget class="QTabWidget" name="tabWidget">
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="tab">
             <attribute name="title">
@@ -1052,6 +1144,26 @@ color: black;</string>
                <string>4</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>5</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>6</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>7</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>8</string>
+              </property>
+             </item>
             </widget>
             <widget class="QComboBox" name="addBranch">
              <property name="geometry">
@@ -1064,7 +1176,12 @@ color: black;</string>
              </property>
              <item>
               <property name="text">
-               <string>CSE</string>
+               <string>CSEA</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>CSEB</string>
               </property>
              </item>
              <item>
@@ -1083,12 +1200,12 @@ color: black;</string>
               <rect>
                <x>390</x>
                <y>80</y>
-               <width>63</width>
+               <width>71</width>
                <height>20</height>
               </rect>
              </property>
              <property name="text">
-              <string>Year</string>
+              <string>Semester</string>
              </property>
             </widget>
             <widget class="QLabel" name="label_22">
@@ -1153,7 +1270,7 @@ color: black;</string>
             <attribute name="title">
              <string>Insert Database</string>
             </attribute>
-            <widget class="QWidget" name="">
+            <widget class="QWidget" name="layoutWidget">
              <property name="geometry">
               <rect>
                <x>210</x>
@@ -1223,50 +1340,43 @@ color:black;</string>
           </size>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="deleteStudentTab">
           <attribute name="title">
            <string>Delete Student</string>
           </attribute>
-          <widget class="QLineEdit" name="deleteRollInput">
-           <property name="geometry">
-            <rect>
-             <x>260</x>
-             <y>110</y>
-             <width>221</width>
-             <height>28</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QLabel" name="label_25">
+          <widget class="QWidget" name="">
            <property name="geometry">
             <rect>
              <x>260</x>
              <y>60</y>
-             <width>211</width>
-             <height>31</height>
+             <width>231</width>
+             <height>106</height>
             </rect>
            </property>
-           <property name="styleSheet">
-            <string notr="true">font: 15pt &quot;Segoe UI&quot;;</string>
-           </property>
-           <property name="text">
-            <string>Enter Roll Number</string>
-           </property>
-          </widget>
-          <widget class="QPushButton" name="submitDelete">
-           <property name="geometry">
-            <rect>
-             <x>260</x>
-             <y>150</y>
-             <width>221</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Delete Roll</string>
-           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item alignment="Qt::AlignmentFlag::AlignHCenter">
+             <widget class="QLabel" name="label_25">
+              <property name="styleSheet">
+               <string notr="true">font: 15pt &quot;Segoe UI&quot;;</string>
+              </property>
+              <property name="text">
+               <string>Enter Roll Number</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="deleteRollInput"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="submitDelete">
+              <property name="text">
+               <string>Delete Roll</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
          <widget class="QWidget" name="tab_6">
@@ -1284,8 +1394,8 @@ color:black;</string>
            </property>
            <property name="dateTime">
             <datetime>
-             <hour>15</hour>
-             <minute>30</minute>
+             <hour>10</hour>
+             <minute>0</minute>
              <second>0</second>
              <year>2024</year>
              <month>12</month>
@@ -1317,7 +1427,12 @@ color:black;</string>
            </property>
            <item>
             <property name="text">
-             <string>CSE</string>
+             <string>CSEA</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>CSEB</string>
             </property>
            </item>
            <item>
@@ -1360,6 +1475,65 @@ color:black;</string>
              <string>4</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>5</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>6</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>7</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>8</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QLabel" name="label_33">
+           <property name="geometry">
+            <rect>
+             <x>180</x>
+             <y>20</y>
+             <width>71</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Semester</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_34">
+           <property name="geometry">
+            <rect>
+             <x>300</x>
+             <y>20</y>
+             <width>71</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Branch</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_35">
+           <property name="geometry">
+            <rect>
+             <x>420</x>
+             <y>20</y>
+             <width>71</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Date</string>
+           </property>
           </widget>
          </widget>
          <widget class="QWidget" name="tab_7">
@@ -1427,7 +1601,12 @@ color:black;</string>
            </property>
            <item>
             <property name="text">
-             <string>CSE</string>
+             <string>CSEA</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>CSEB</string>
             </property>
            </item>
            <item>

@@ -13,85 +13,71 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QPushButton" name="login">
+  <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>320</y>
-     <width>83</width>
-     <height>29</height>
+     <x>260</x>
+     <y>140</y>
+     <width>271</width>
+     <height>220</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Login</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>280</x>
-     <y>150</y>
-     <width>212</width>
-     <height>63</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">font: 28pt &quot;Segoe UI&quot;;
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item alignment="Qt::AlignmentFlag::AlignHCenter">
+     <widget class="QLabel" name="label_3">
+      <property name="styleSheet">
+       <string notr="true">font: 28pt &quot;Segoe UI&quot;;
 margin-left: auto;
 margin-right: auto;</string>
-   </property>
-   <property name="text">
-    <string>Login</string>
-   </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>281</x>
-     <y>219</y>
-     <width>200</width>
-     <height>79</height>
-    </rect>
-   </property>
-   <layout class="QFormLayout" name="formLayout">
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_2">
+      </property>
       <property name="text">
-       <string>Password</string>
+       <string>Login</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="password">
-      <property name="echoMode">
-       <enum>QLineEdit::EchoMode::Password</enum>
-      </property>
-     </widget>
+    <item>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Password</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="password">
+        <property name="echoMode">
+         <enum>QLineEdit::EchoMode::Password</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Username</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="username"/>
+      </item>
+     </layout>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label">
+    <item>
+     <widget class="QPushButton" name="login">
       <property name="text">
-       <string>Username</string>
+       <string>Login</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="username"/>
+    <item alignment="Qt::AlignmentFlag::AlignHCenter">
+     <widget class="QCheckBox" name="signedIn">
+      <property name="text">
+       <string>Keep me signed in</string>
+      </property>
+     </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QCheckBox" name="signedIn">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>360</y>
-     <width>151</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Keep me signed in</string>
-   </property>
   </widget>
  </widget>
  <resources/>
